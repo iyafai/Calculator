@@ -1,0 +1,28 @@
+double ExpX_n1(double start, double end)
+{
+	double valueS=0, valueE=0;
+	double sum;
+		
+	valueS = (start/(1-start*start))*(start/(1-start*start))*
+		exp(-1*(start/(1-start*start))*(start/(1-start*start)));
+	valueE = (end/(1-end*end))*(end/(1-end*end))*exp(-1*(end/(1-end*end))*(end/(1-end*end)));
+
+	if((valueE-valueS) < .001)
+		sum = sqrt((end-start)*(end-start))*(valueS+valueE)/2;
+	else
+		sum = ExpX_n1(start, (end+start)/2) + ExpX_n1(((end+start)/2),end);
+	return sum;
+}
+
+double Sub(double start, double end, double steps)
+{
+	double sum=0;
+	double stepsize = (end-start)/steps;
+	for(double i=start; i<end; i+=stepsize)
+	{
+		sum+=(i/(1.0-i*i))*(i/(1.0-i*i))*exp(-1*(i/(1.0-i*i))*(i/(1.0-i*i)))*((1.0+i*i)/((1.0-i*i)*(1.0-i*i)))*stepsize;
+	}
+
+	return sum;
+	
+}
