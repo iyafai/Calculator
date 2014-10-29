@@ -1,0 +1,46 @@
+/*
+Matrix Matrix::Invert()
+{
+	Matrix tmp(row,col);
+	Matrix tmpI(row,col);
+	for(int l=0; l<col; l++)
+	{
+		tmpI.setEle(l,l,1);
+		for(int j=0; j<row; j++)
+			tmp.setEle(l,j,element[l][j]);
+	}
+
+	double scale =0;
+	for(int i=0; i<row; i++)
+	{
+		for(int j=0; j<col; j++)
+		{
+			if(element[i][j]!=0)
+			{
+				scale = (1.0/element[i][j]);
+				for(int m=j; m<col; m++)
+				{
+					tmpI.setEle(i,m,tmpI.getEle(i,m)*scale);
+					tmp.setEle(i,m,element[i][m]*scale);
+				}
+			}
+			j=col;
+		}
+	
+	}
+
+	for(int l=0; l<row; l++)
+	{
+		for(int k=0; k<col; k++)
+		{
+			if(element[l][k]=1)
+			{
+				for(int r=l; r<row; r++)
+				{
+					tmp.setEle(
+				}
+			}
+		}
+	}
+	return tmpI;
+}*/
