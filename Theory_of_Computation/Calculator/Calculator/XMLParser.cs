@@ -14,7 +14,7 @@ namespace Calculator
         //Constructor
         public XMLParser()
         {
-            path = "grammer.xml"; //for testing purpose.  Will actually pass.
+            path = @"..\..\GrammarFinal-T3.xml"; //for testing purpose.  Will actually pass.
             GPBTables = new GoldParserTables();
 
         }
