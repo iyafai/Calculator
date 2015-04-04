@@ -1,0 +1,630 @@
+Token List:
+
+
+
+      #       Type      Value Location
+
+[    1] Identifier         x1 at 1,1  
+
+[    2]         EQ          = at 1,4  
+
+[    3]    Integer          2 at 1,6  
+
+[    4]  Semicolon          ; at 1,7  
+
+[    5] Identifier         x2 at 2,1  
+
+[    6]         EQ          = at 2,4  
+
+[    7]      Float       10.0 at 2,6  
+
+[    8]  Semicolon          ; at 2,10 
+
+[    9] Identifier         x3 at 3,1  
+
+[   10]         EQ          = at 3,4  
+
+[   11] Identifier         x1 at 3,6  
+
+[   12]       Mult          * at 3,8  
+
+[   13] Identifier         x2 at 3,9  
+
+[   14]  Semicolon          ; at 3,11 
+
+[   15] Identifier         x4 at 4,1  
+
+[   16]         EQ          = at 4,4  
+
+[   17] Identifier         x3 at 4,6  
+
+[   18]     Divide          / at 4,8  
+
+[   19]    L_Paren          ( at 4,9  
+
+[   20] Identifier         x2 at 4,10 
+
+[   21]     Divide          / at 4,12 
+
+[   22] Identifier         x1 at 4,13 
+
+[   23]    R_Paren          ) at 4,15 
+
+[   24]  Semicolon          ; at 4,16 
+
+[   25] Identifier         x5 at 5,1  
+
+[   26]         EQ          = at 5,4  
+
+[   27]      Float        0.5 at 5,6  
+
+[   28]  Semicolon          ; at 5,9  
+
+[   29] Identifier         x6 at 6,1  
+
+[   30]         EQ          = at 6,4  
+
+[   31]    L_Paren          ( at 6,6  
+
+[   32]    L_Paren          ( at 6,7  
+
+[   33]    Integer          2 at 6,8  
+
+[   34]        Exp          ^ at 6,9  
+
+[   35] Identifier         x2 at 6,10 
+
+[   36]    R_Paren          ) at 6,12 
+
+[   37]     Divide          / at 6,13 
+
+[   38]    L_Paren          ( at 6,14 
+
+[   39] Identifier         x4 at 6,15 
+
+[   40]        Exp          ^ at 6,17 
+
+[   41]    Integer          4 at 6,18 
+
+[   42]    R_Paren          ) at 6,19 
+
+[   43]    R_Paren          ) at 6,20 
+
+[   44]        Exp          ^ at 6,21 
+
+[   45] Identifier         x5 at 6,22 
+
+[   46]  Semicolon          ; at 6,24 
+
+[   47] Identifier         x7 at 7,1  
+
+[   48]         EQ          = at 7,4  
+
+[   49]    Divisor        div at 7,6  
+
+[   50]    L_Paren          ( at 7,9  
+
+[   51] Identifier         x3 at 7,10 
+
+[   52]      Comma          , at 7,12 
+
+[   53] Identifier         x4 at 7,13 
+
+[   54]    R_Paren          ) at 7,15 
+
+[   55]  Semicolon          ; at 7,16 
+
+[   56] Identifier         x8 at 8,1  
+
+[   57]         EQ          = at 8,4  
+
+[   58]        Mod        mod at 8,6  
+
+[   59]    L_Paren          ( at 8,9  
+
+[   60] Identifier         x2 at 8,10 
+
+[   61]      Comma          , at 8,12 
+
+[   62] Identifier         x4 at 8,13 
+
+[   63]    R_Paren          ) at 8,15 
+
+[   64]  Semicolon          ; at 8,16 
+
+[   65] Identifier         x9 at 9,1  
+
+[   66]         EQ          = at 9,4  
+
+[   67]    Divisor        div at 9,6  
+
+[   68]    L_Paren          ( at 9,9  
+
+[   69]        Mod        mod at 9,10 
+
+[   70]    L_Paren          ( at 9,13 
+
+[   71] Identifier         x2 at 9,14 
+
+[   72]      Comma          , at 9,16 
+
+[   73] Identifier         x3 at 9,17 
+
+[   74]    R_Paren          ) at 9,19 
+
+[   75]      Comma          , at 9,20 
+
+[   76]    Divisor        div at 9,21 
+
+[   77]    L_Paren          ( at 9,24 
+
+[   78] Identifier         x6 at 9,25 
+
+[   79]       Mult          * at 9,27 
+
+[   80]    Integer          4 at 9,28 
+
+[   81]      Comma          , at 9,29 
+
+[   82] Identifier         x8 at 9,30 
+
+[   83]    R_Paren          ) at 9,32 
+
+[   84]    R_Paren          ) at 9,33 
+
+[   85]  Semicolon          ; at 9,34 
+
+[   86] Identifier        x10 at 10,1 
+
+[   87]         EQ          = at 10,5 
+
+[   88]        Mod        mod at 10,7 
+
+[   89]    L_Paren          ( at 10,10
+
+[   90]    Divisor        div at 10,11
+
+[   91]    L_Paren          ( at 10,14
+
+[   92] Identifier         x3 at 10,15
+
+[   93]      Comma          , at 10,17
+
+[   94] Identifier         x8 at 10,18
+
+[   95]    R_Paren          ) at 10,20
+
+[   96]      Comma          , at 10,21
+
+[   97]        Mod        mod at 10,22
+
+[   98]    L_Paren          ( at 10,25
+
+[   99]    Integer          1 at 10,26
+
+[  100]      Comma          , at 10,27
+
+[  101] Identifier         x4 at 10,28
+
+[  102]    R_Paren          ) at 10,30
+
+[  103]    R_Paren          ) at 10,31
+
+[  104]  Semicolon          ; at 10,32
+
+[  105]  Semicolon          ; at 11,1 
+
+[  106] Identifier        x11 at 12,1 
+
+[  107]         EQ          = at 12,5 
+
+[  108]    Integer          2 at 12,7 
+
+[  109]        Exp          ^ at 12,8 
+
+[  110]    L_Paren          ( at 12,9 
+
+[  111]    Integer          3 at 12,10
+
+[  112]       Mult          * at 12,11
+
+[  113]    Integer          4 at 12,12
+
+[  114]    R_Paren          ) at 12,13
+
+[  115]  Semicolon          ; at 12,14
+
+[  116] Identifier        x12 at 13,1 
+
+[  117]         EQ          = at 13,5 
+
+[  118]    Integer          2 at 13,7 
+
+[  119]        Exp          ^ at 13,8 
+
+[  120]    L_Paren          ( at 13,9 
+
+[  121] Identifier         x1 at 13,10
+
+[  122]        Exp          ^ at 13,12
+
+[  123] Identifier         x2 at 13,13
+
+[  124]    R_Paren          ) at 13,15
+
+[  125]  Semicolon          ; at 13,16
+
+[  126] Identifier        x13 at 14,1 
+
+[  127]         EQ          = at 14,5 
+
+[  128]    Integer          2 at 14,7 
+
+[  129]     Divide          / at 14,8 
+
+[  130] Identifier         x1 at 14,9 
+
+[  131]        Sub          - at 14,11
+
+[  132]    Integer          5 at 14,12
+
+[  133]  Semicolon          ; at 14,13
+
+[  134] Identifier        x14 at 15,1 
+
+[  135]         EQ          = at 15,5 
+
+[  136]        Mod        mod at 15,7 
+
+[  137]    L_Paren          ( at 15,10
+
+[  138]    Integer          2 at 15,11
+
+[  139]     Divide          / at 15,12
+
+[  140] Identifier         x1 at 15,13
+
+[  141]        Sub          - at 15,15
+
+[  142]    Integer          5 at 15,16
+
+[  143]      Comma          , at 15,17
+
+[  144] Identifier         x3 at 15,18
+
+[  145]    R_Paren          ) at 15,20
+
+[  146]        Exp          ^ at 15,21
+
+[  147]    Integer          4 at 15,22
+
+[  148]  Semicolon          ; at 15,23
+
+[  149] Identifier        x15 at 16,1 
+
+[  150]         EQ          = at 16,5 
+
+[  151]    Integer          2 at 16,7 
+
+[  152]        Exp          ^ at 16,8 
+
+[  153]        Sub          - at 16,9 
+
+[  154] Identifier         x5 at 16,10
+
+[  155]        Add          + at 16,12
+
+[  156]    Integer          3 at 16,13
+
+[  157]  Semicolon          ; at 16,14
+
+[  158] Identifier        x16 at 17,1 
+
+[  159]         EQ          = at 17,5 
+
+[  160]    Divisor        div at 17,7 
+
+[  161]    L_Paren          ( at 17,10
+
+[  162]    Integer         10 at 17,11
+
+[  163]      Comma          , at 17,13
+
+[  164] Identifier        x15 at 17,14
+
+[  165]    R_Paren          ) at 17,17
+
+[  166]  Semicolon          ; at 17,18
+
+[  167] Identifier        x17 at 18,1 
+
+[  168]         EQ          = at 18,5 
+
+[  169] Identifier        x18 at 18,7 
+
+[  170]  Semicolon          ; at 18,10
+
+[  171] Identifier        x18 at 19,1 
+
+[  172]         EQ          = at 19,5 
+
+[  173] Identifier         x1 at 19,7 
+
+[  174]        Add          + at 19,9 
+
+[  175] Identifier         x2 at 19,10
+
+[  176]       Mult          * at 19,12
+
+[  177] Identifier         x3 at 19,13
+
+[  178]        Sub          - at 19,15
+
+[  179] Identifier         x4 at 19,16
+
+[  180]        Exp          ^ at 19,18
+
+[  181] Identifier         x5 at 19,19
+
+[  182]     Divide          / at 19,21
+
+[  183] Identifier         x6 at 19,22
+
+[  184]        Add          + at 19,24
+
+[  185] Identifier         x7 at 19,25
+
+[  186]        Sub          - at 19,27
+
+[  187]        Mod        mod at 19,28
+
+[  188]    L_Paren          ( at 19,31
+
+[  189]    Divisor        div at 19,32
+
+[  190]    L_Paren          ( at 19,35
+
+[  191]        Mod        mod at 19,36
+
+[  192]    L_Paren          ( at 19,39
+
+[  193] Identifier         x8 at 19,40
+
+[  194]      Comma          , at 19,42
+
+[  195] Identifier         x9 at 19,43
+
+[  196]    R_Paren          ) at 19,45
+
+[  197]      Comma          , at 19,46
+
+[  198] Identifier        x14 at 19,47
+
+[  199]    R_Paren          ) at 19,50
+
+[  200]      Comma          , at 19,51
+
+[  201]        Mod        mod at 19,52
+
+[  202]    L_Paren          ( at 19,55
+
+[  203] Identifier        x11 at 19,56
+
+[  204]      Comma          , at 19,59
+
+[  205] Identifier        x12 at 19,60
+
+[  206]    R_Paren          ) at 19,63
+
+[  207]    R_Paren          ) at 19,64
+
+[  208]  Semicolon          ; at 19,65
+
+[  209] Identifier        x19 at 20,1 
+
+[  210]         EQ          = at 20,5 
+
+[  211]        Sub          - at 20,7 
+
+[  212]    L_Paren          ( at 20,8 
+
+[  213]        Sub          - at 20,9 
+
+[  214]    L_Paren          ( at 20,10
+
+[  215]        Sub          - at 20,11
+
+[  216]    L_Paren          ( at 20,12
+
+[  217]        Sub          - at 20,13
+
+[  218]    L_Paren          ( at 20,14
+
+[  219]        Sub          - at 20,15
+
+[  220]    L_Paren          ( at 20,16
+
+[  221]        Sub          - at 20,17
+
+[  222]    L_Paren          ( at 20,18
+
+[  223]        Sub          - at 20,19
+
+[  224]    L_Paren          ( at 20,20
+
+[  225]        Sub          - at 20,21
+
+[  226]    L_Paren          ( at 20,22
+
+[  227]        Sub          - at 20,23
+
+[  228]    L_Paren          ( at 20,24
+
+[  229]        Sub          - at 20,25
+
+[  230]    L_Paren          ( at 20,26
+
+[  231]        Sub          - at 20,27
+
+[  232]    L_Paren          ( at 20,28
+
+[  233]        Sub          - at 20,29
+
+[  234]    L_Paren          ( at 20,30
+
+[  235]        Sub          - at 20,31
+
+[  236]    L_Paren          ( at 20,32
+
+[  237]        Sub          - at 20,33
+
+[  238]    L_Paren          ( at 20,34
+
+[  239]        Sub          - at 20,35
+
+[  240]    L_Paren          ( at 20,36
+
+[  241]        Sub          - at 20,37
+
+[  242]    L_Paren          ( at 20,38
+
+[  243]        Sub          - at 20,39
+
+[  244]    L_Paren          ( at 20,40
+
+[  245]        Sub          - at 20,41
+
+[  246]    L_Paren          ( at 20,42
+
+[  247]        Sub          - at 20,43
+
+[  248]    L_Paren          ( at 20,44
+
+[  249]        Sub          - at 20,45
+
+[  250] Identifier         x2 at 20,46
+
+[  251]    R_Paren          ) at 20,48
+
+[  252]    R_Paren          ) at 20,49
+
+[  253]    R_Paren          ) at 20,50
+
+[  254]    R_Paren          ) at 20,51
+
+[  255]    R_Paren          ) at 20,52
+
+[  256]    R_Paren          ) at 20,53
+
+[  257]    R_Paren          ) at 20,54
+
+[  258]    R_Paren          ) at 20,55
+
+[  259]    R_Paren          ) at 20,56
+
+[  260]    R_Paren          ) at 20,57
+
+[  261]    R_Paren          ) at 20,58
+
+[  262]    R_Paren          ) at 20,59
+
+[  263]    R_Paren          ) at 20,60
+
+[  264]    R_Paren          ) at 20,61
+
+[  265]    R_Paren          ) at 20,62
+
+[  266]    R_Paren          ) at 20,63
+
+[  267]    R_Paren          ) at 20,64
+
+[  268]    R_Paren          ) at 20,65
+
+[  269]    R_Paren          ) at 20,66
+
+[  270]  Semicolon          ; at 20,67
+
+[  271] Identifier        x20 at 21,1 
+
+[  272]         EQ          = at 21,5 
+
+[  273]    Integer          2 at 21,7 
+
+[  274]        Add          + at 21,8 
+
+[  275]    L_Paren          ( at 21,9 
+
+[  276]    Integer          3 at 21,10
+
+[  277]       Mult          * at 21,11
+
+[  278]    Integer          5 at 21,12
+
+[  279]    R_Paren          ) at 21,13
+
+[  280]  Semicolon          ; at 21,14
+
+[  281] Identifier        X20 at 22,1 
+
+[  282]         EQ          = at 22,5 
+
+[  283]    Integer          2 at 22,7 
+
+[  284]       Mult          * at 22,8 
+
+[  285]    L_Paren          ( at 22,9 
+
+[  286]    Integer          3 at 22,10
+
+[  287]        Add          + at 22,11
+
+[  288]    Integer          5 at 22,12
+
+[  289]    R_Paren          ) at 22,13
+
+[  290]  Semicolon          ; at 22,14
+
+[  291] Identifier        x21 at 23,1 
+
+[  292]         EQ          = at 23,5 
+
+[  293] Identifier        x20 at 23,7 
+
+[  294]        Add          + at 23,11
+
+[  295] Identifier        X20 at 23,13
+
+[  296]  Semicolon          ; at 23,16
+
+[  297] Identifier        x22 at 24,1 
+
+[  298]         EQ          = at 24,5 
+
+[  299]      Float  2.345e-12 at 24,7 
+
+[  300]  Semicolon          ; at 24,16
+
+[  301]      Error Unrecognized character: % at 25,1 
+
+[  302]      Error Unrecognized character: & at 25,2 
+
+[  303]      Error Unrecognized character: $ at 25,3 
+
+[  304]      Error Unrecognized character: @ at 25,4 
+
+[  305]        EOF        EOF at 26,1 
+
+
+
+Errors:
+
+
+
+[    1] At    25, 0:  Unrecognized character:     %
+
+[    2] At    25, 1:  Unrecognized character:     &
+
+[    3] At    25, 2:  Unrecognized character:     $
+
+[    4] At    25, 3:  Unrecognized character:     @
+
