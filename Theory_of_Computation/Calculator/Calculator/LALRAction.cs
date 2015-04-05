@@ -18,5 +18,9 @@ namespace Calculator
             this.action = action;
             this.value = value;
         }
+
+        public int getIndex() { return symbolIndex; }
+        public int getAction()  { return action; }
+        public int getValue()   {   return value; }
     }
 }

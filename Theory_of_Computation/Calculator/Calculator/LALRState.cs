@@ -18,5 +18,9 @@ namespace Calculator
             this.actionCount = actionCount;
             this.LALRActionList = LALRActionList;
         }
+
+        public int getLALR_index() { return index; }
+        public int getLALR_actionCount() {   return actionCount; }
+        public List<LALRAction> getLALR_ActionList()   {   return LALRActionList; }
     }
 }
