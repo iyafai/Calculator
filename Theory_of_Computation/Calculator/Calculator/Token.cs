@@ -32,6 +32,22 @@ namespace Calculator
         public bool isTokenValid() { return valid; }
         public string getTokenName()    {   return token_name;  }
         public int getTokenSymbol()    { return symbol; }
+
+        public bool isOperator()
+        {
+            if (this.getTokenSymbol() == (3 | 5 | 6 | 7 | 13 | 14 | 15 | 18))
+                return true;
+            else
+                return false;
+        }
+
+        public bool isTerminal()
+        {
+            if (this.getTokenSymbol() == (8 | 9 | 10 | 11 | 17))
+                return true;
+            else
+                return false;
+        }
     }
 
     class TokenStream
