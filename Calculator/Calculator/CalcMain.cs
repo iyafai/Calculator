@@ -11,7 +11,7 @@ namespace Calculator
     {
         public static void Main(string[] args)
         {
-            string result = "Calculator.out";
+            //string result = "Calculator.out";
             //pulls each line from the file and adds to its own string in the List
             List<string> doc_lines = new List<string>();
             doc_lines.AddRange(File.ReadAllLines(@"..\..\Test1.inp"));
@@ -24,7 +24,7 @@ namespace Calculator
             LexicalAnalyzer LA = new LexicalAnalyzer();
             TokenStream TStream = new TokenStream();
 
-            int count = 1, fail_count = 1, line_count = 1, col_count = 1, col_at = 1;
+            //int count = 1, fail_count = 1, line_count = 1, col_count = 1, col_at = 1;
             //These keep track of which token, which error, which line and column we're at
 
             //Magic Time

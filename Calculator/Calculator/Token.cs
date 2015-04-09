@@ -70,7 +70,7 @@ namespace Calculator
 
         public Token getNextToken(int index)
         {
-            Token EOS = new Token("END", -10, false);
+            Token EOS = new Token("EOS", 0, true);
             if (index >= (TStream.Count - 1))
                 return EOS;
             else

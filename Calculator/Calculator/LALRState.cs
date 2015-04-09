@@ -38,8 +38,8 @@ namespace Calculator
             }
             catch (ArgumentOutOfRangeException e)
             {
-                Console.Out.Write("Error Index Out of Bounds on Checking LALR Table LALR_index:{0}, Action_Count: {1} ", this.getLALR_index(),
-                    this.getLALR_actionCount());
+                Console.Out.Write("{0} on Checking LALR Table LALR_index:{1}, Action_Count: {2} ", this.getLALR_index(),
+                    this.getLALR_actionCount(), e.Message);
                 return null;
             }
             //return this.getLALR_ActionList()[count];

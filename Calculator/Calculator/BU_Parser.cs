@@ -26,14 +26,15 @@ namespace Calculator
             State_Stack.Push(current_state);
             Token Current = TStream.getToken(current_state);
             Token Next = TStream.getNextToken(current_state);
+            LALRAction Lact = Lstate.getActMatchesIndex(Current.getTokenSymbol());
 
             int i = 0;
-            while(i<TStream.Count())
+            while(State_Stack.Count >0 || Input_Stack.Count > 0)
             {
                 //Pulls state obj for current state (vert on table)
                 Lstate = lalrTable[State_Stack.Peek()];             
                 //Action corresponds to incoming input (horizontal on table
-                LALRAction Lact = Lstate.getActMatchesIndex(Current.getTokenSymbol()); 
+                Lact = Lstate.getActMatchesIndex(Current.getTokenSymbol());
 
                 if (Lact.getAction() == 1)                      //Shift
                 {
