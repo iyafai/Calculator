@@ -14,7 +14,7 @@ namespace Calculator
             string result = "Calculator.out";
             //pulls each line from the file and adds to its own string in the List
             List<string> doc_lines = new List<string>();
-            doc_lines.AddRange(File.ReadAllLines(@"..\..\Test2.inp"));
+            doc_lines.AddRange(File.ReadAllLines(@"..\..\Test1.inp"));
 
             XMLParser xmp = new XMLParser();
             xmp.parseAll();
@@ -32,6 +32,9 @@ namespace Calculator
             {
                 TStream = LA.getTokenStream(GPtables,eq);
             }
+
+            BU_Parser BP = new BU_Parser();
+            AbstractSyntaxTree line1 = BP.ParseStream(GPtables, TStream);
             
         }
     }

@@ -10,7 +10,9 @@ namespace Calculator
     {
         public AbstractSyntaxTree ParseStream(GoldParserTables GPTables, TokenStream TStream)
         {
-            AbstractSyntaxTree AST = new AbstractSyntaxTree();
+            Token Head = new Token("HEAD", 100, true);
+            Node HeadN = new Node(Head);
+            AbstractSyntaxTree AST = new AbstractSyntaxTree(HeadN);
             List<LALRState> lalrTable = GPTables.getLALRTable();
             List<RuleTableMember> prodTable = GPTables.getRuleTable();
             List<SymbolTableMember> symTable = GPTables.getSymbolTable();
@@ -19,70 +21,94 @@ namespace Calculator
             Stack<int> State_Stack = new Stack<int>();
             Stack<Token> Input_Stack = new Stack<Token>();
             Stack<Node> Semantic_Stack = new Stack<Node>();
-            int current_state = 0;//TStream.getToken(0).getTokenSymbol();
+
+            int current_state = 0;
             State_Stack.Push(current_state);
+            Token Current = TStream.getToken(current_state);
+            Token Next = TStream.getNextToken(current_state);
 
-            for(int i=0; i<TStream.Count(); i++)
+            int i = 0;
+            while(i<TStream.Count())
             {
-                Token Next = TStream.getNextToken(i);
-                Lstate = lalrTable[current_state];
-                LALRAction Lact = Lstate.getLALR_ActionList()[Next.getTokenSymbol()];
+                //Pulls state obj for current state (vert on table)
+                Lstate = lalrTable[State_Stack.Peek()];             
+                //Action corresponds to incoming input (horizontal on table
+                LALRAction Lact = Lstate.getActMatchesIndex(Current.getTokenSymbol()); 
 
-//                foreach (LALRAction Lact in Lstate.getLALR_ActionList())
-//                {
-                    
-//                    if (Next.getTokenSymbol() == Lact.getIndex())
-//                    {
-                        if (Lact.getAction() == 1)          //Shift
-                        {
-                            current_state = Lact.getValue();
-                            State_Stack.Push(Lact.getValue());
-                            Input_Stack.Push(Next);
-                            continue;
-                        }
+                if (Lact.getAction() == 1)                      //Shift
+                {
+                    Node TempN = new Node(Current);
+                    current_state = Lact.getValue();            //New state becomes the value of the action
+                    State_Stack.Push(Lact.getValue());          //push onto stack
+                    Input_Stack.Push(Current);                  //Input Token gets pushed on, wraps to beginning for next Token
+                    Semantic_Stack.Push(TempN);
+                    Current = TStream.getNextToken(i);
+                    i++;
+                }
 
-                        else if (Lact.getAction() == 2)     //Reduce
-                        {
-                            List<Node> temp = new List<Node>();
-                            Node OPN = null;
-                            foreach (int j in prodTable[current_state].getProd_symIndices())
-                            {
-                                if (Input_Stack.Peek().isOperator())
-                                {
-                                    OPN = new Node(Input_Stack.Pop());
-                                }
-                                else if(Input_Stack.Peek().isTerminal())
-                                {
-                                    Node tempN = new Node(Input_Stack.Pop());
-                                    temp.Add(tempN);
-                                }
-                            }
-                            int NTind = prodTable[current_state].getProd_NT_index();
-                            Token tempT = new Token(symTable[NTind].getSymbolTableName(),NTind,true);
-                            Input_Stack.Push(tempT);
-                            AST.make_tree(OPN, temp[0], temp[1]);
-                            current_state = State_Stack.Peek();
-                            Lstate = lalrTable[current_state];
-                            current_state = Lstate.getLALR_ActionList()[current_state].getAction();
-                            State_Stack.Push(current_state);
-                            continue;
-                        }
+                else if (Lact.getAction() == 2)     //Reduce
+                {
+                    //grabs production with index given from LALR Action
+                    int ProdInd = Lact.getValue();
+                    //saves the Non-Terminal Index for creating a new token for pushing on the stack
+                    int NTind = prodTable[ProdInd].getProd_NT_index();
+                    //create New Token from the Non-Terminal Symbol
+                    Token tempT = new Token(symTable[NTind].getSymbolTableName(), NTind, true);
+                    List<Node> tempN = new List<Node>();
+                    Node OPN = null;
 
-                        else if (Lact.getAction() == 3)     //Goto
+                    foreach (int sym in prodTable[ProdInd].getProd_symIndices())
+                    {
+                        if (Semantic_Stack.Peek().isOperator())
                         {
-                            current_state = Lact.getValue();
-                            State_Stack.Push(current_state);
+                            OPN = Semantic_Stack.Pop();
                         }
+                        else
+                        {
+                            tempN.Add(Semantic_Stack.Pop());
+                        }
+                        Input_Stack.Pop();
+                        State_Stack.Pop();
+                    }
+                    Input_Stack.Push(tempT);
+                    if (prodTable[ProdInd].getProd_SymCount() == 3)
+                    {
+                        Semantic_Stack.Push(AST.makeTree(OPN, tempN));
+                    }
+                    else if(prodTable[ProdInd].getProd_SymCount() == 2)
+                    {
+                        Semantic_Stack.Push(AST.makeTree(OPN, tempN));
+                    }
+                    else
+                    {
+                        Node temp2 = new Node(tempT);
+                        Semantic_Stack.Push(AST.makeTree(temp2, tempN));
+                    }
 
-                        else if (Lact.getAction() == 4)     //Accept
-                        {
-                        }
+                    //The new state is what's left on the State Stack
+                    Lstate = lalrTable[State_Stack.Peek()];
+                    //After the Reduce we have a goto from the Non-Terminal Token
+                    //Our current state becomes the Action Value from the LALR Action that matches the index
+                    current_state = Lstate.getActMatchesIndex(NTind).getValue();
+                    State_Stack.Push(current_state);
+                }
 
-                        else                                //Failure
-                        {
-                        }
-//                    }
-//                }
+                else if (Lact.getAction() == 3)     //Goto
+                {
+                    current_state = Lact.getValue();
+                    State_Stack.Push(current_state);
+                }
+
+                else if (Lact.getAction() == 4)     //Accept
+                {
+                    return AST;
+                }
+
+                else                                //Failure
+                {
+                    Console.Out.WriteLine("Parse Failed");
+                    //Better error handling to come later
+                }
             }
 
             return AST;

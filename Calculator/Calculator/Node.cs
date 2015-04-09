@@ -42,5 +42,14 @@ namespace Calculator
             else
                 return false;
         }
+
+        public bool isOperator()
+        {
+            if (this.Content.getTokenSymbol() == (3 | 5 | 6 | 7 | 13 | 14 | 15 | 18))
+                return true;
+            else
+                return false;
+        }
+
     }
 }
