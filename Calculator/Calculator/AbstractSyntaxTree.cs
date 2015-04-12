@@ -8,26 +8,52 @@ namespace Calculator
     class AbstractSyntaxTree
     {
         private Node Head;
-        private LinkedList<Node> Children;
 
         public AbstractSyntaxTree(Node H)
         {
             this.Head = H;
-            this.Children = new LinkedList<Node>();
         }
 
-        public Node makeTree(Node OP, List<Node> Chld)
+        public Node makeTree(Node OP, LinkedList<Node> Chld)
         {
             this.Head = OP;
-            foreach(Node n in Chld)
-            {
-                if (this.Children == null)
-                    this.Children.AddFirst(n);
-                else
-                    this.Children.AddLast(n);
-            }
+            this.Head.setChildren(Chld);
+
+            //foreach(Node n in Chld)
+            //{
+            //    if (this.Children == null)
+            //        this.Children.AddFirst(n);
+            //    else
+            //        this.Children.AddLast(n);
+            //}
             
             return Head;
+        }
+
+        public void TraverseTree()
+        {
+            Stack<Node> Next = new Stack<Node>();
+            LinkedList<Node> Visited = new LinkedList<Node>();
+
+            Next.Push(Head);
+
+            while (Next.Count > 0)
+            {
+               /* foreach (Node k in Next)
+                {
+                    Console.Out.Write("Name: {0}", k.getToken().getTokenName());//, k.getType());
+                }*/
+                Console.Out.Write("{0} \n",Next.Peek().getToken().getTokenName());
+                Visited.AddFirst(Head);
+                foreach (Node n in Next.Pop().getChildren())
+                {
+                    Next.Push(n);
+                    Console.Out.Write("{0} ", n.getToken().getTokenName());
+                }
+                Console.Out.Write("\n\n");
+                //Next.Pop();
+
+            }
         }
         /*
         public Node make_2L_tree(Node op, Node left, Node right)

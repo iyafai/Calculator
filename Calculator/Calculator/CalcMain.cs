@@ -14,7 +14,7 @@ namespace Calculator
             //string result = "Calculator.out";
             //pulls each line from the file and adds to its own string in the List
             List<string> doc_lines = new List<string>();
-            doc_lines.AddRange(File.ReadAllLines(@"..\..\Test1.inp"));
+            doc_lines.AddRange(File.ReadAllLines(@"..\..\Test3.inp"));
 
             XMLParser xmp = new XMLParser();
             xmp.parseAll();

@@ -47,7 +47,7 @@ namespace Calculator
                     i++;
                 }
 
-                else if (Lact.getAction() == 2)     //Reduce
+                else if (Lact.getAction() == 2)                 //Reduce
                 {
                     //grabs production with index given from LALR Action
                     int ProdInd = Lact.getValue();
@@ -55,18 +55,20 @@ namespace Calculator
                     int NTind = prodTable[ProdInd].getProd_NT_index();
                     //create New Token from the Non-Terminal Symbol
                     Token tempT = new Token(symTable[NTind].getSymbolTableName(), NTind, true);
-                    List<Node> tempN = new List<Node>();
+                    LinkedList<Node> tempN = new LinkedList<Node>();
                     Node OPN = null;
+                    bool first = false;
 
                     foreach (int sym in prodTable[ProdInd].getProd_symIndices())
                     {
-                        if (Semantic_Stack.Peek().isOperator())
+                        if (Semantic_Stack.Peek().isOperator() && !first && !Semantic_Stack.Peek().hasChildren())
                         {
                             OPN = Semantic_Stack.Pop();
+                            first = true;
                         }
                         else
                         {
-                            tempN.Add(Semantic_Stack.Pop());
+                            tempN.AddFirst(Semantic_Stack.Pop());
                         }
                         Input_Stack.Pop();
                         State_Stack.Pop();
@@ -80,10 +82,11 @@ namespace Calculator
                     {
                         Semantic_Stack.Push(AST.makeTree(OPN, tempN));
                     }
-                    else
+                    else //if(prodTable[ProdInd].getProd_SymCount() == 1)
                     {
                         Node temp2 = new Node(tempT);
                         Semantic_Stack.Push(AST.makeTree(temp2, tempN));
+                        //Semantic_Stack.Push(tempN.ElementAt(0));
                     }
 
                     //The new state is what's left on the State Stack
@@ -102,6 +105,7 @@ namespace Calculator
 
                 else if (Lact.getAction() == 4)     //Accept
                 {
+                    AST.TraverseTree();
                     return AST;
                 }
 
