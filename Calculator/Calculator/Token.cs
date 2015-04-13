@@ -35,10 +35,14 @@ namespace Calculator
 
         public bool isOperator()
         {
-            if (this.getTokenSymbol() == (3 | 5 | 6 | 7 | 13 | 14 | 15 | 18))
-                return true;
-            else
-                return false;
+            int[] OPcheck = { 3, 5, 6, 7, 13, 14, 15, 18 };
+            foreach (int s in OPcheck)
+            {
+                if (this.getTokenSymbol() == s)
+                    return true;
+            }
+
+            return false;
         }
 
         public bool isTerminal()

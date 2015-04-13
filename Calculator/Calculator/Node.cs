@@ -72,25 +72,39 @@ namespace Calculator
         //    this.RightChild = RC;
         //}
 
-        public bool isTerminal()
+        public bool isNum()
         {
-            if(this.Content.getTokenSymbol() == ( 8 | 9 | 10 | 11 | 17 ))
-                return true;
-            else
-                return false;
-        }
-
-        public bool isOperator()
-        {
-            int[] OPcheck = { 3, 5, 6, 7, 13, 14, 15, 18 };
-            foreach (int s in OPcheck)
+            int[] Ncheck = { 8 , 9 , 10 , 11 };
+            foreach (int s in Ncheck)
             {
                 if (this.Content.getTokenSymbol() == s)
                     return true;
             }
-                
             return false;
         }
 
+        public bool isOperator()
+        {
+            return this.Content.isOperator();
+        }
+
+        public void PrintTree(string indent, bool last)
+        {
+            Console.Write(indent);
+            if (last)
+            {
+                Console.Write("\\__");
+                indent += "  ";
+            }
+            else
+            {
+                Console.Write("|__");
+                indent += "| ";
+            }
+            Console.Write("\"{0}\"\n",this.Content.getTokenName());
+
+            for (int i = 0; i < Children.Count; i++)
+                this.Children.ElementAt(i).PrintTree(indent, i == Children.Count - 1);
+        }
     }
 }

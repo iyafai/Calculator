@@ -61,15 +61,19 @@ namespace Calculator
 
                     foreach (int sym in prodTable[ProdInd].getProd_symIndices())
                     {
-                        if (Semantic_Stack.Peek().isOperator() && !first && !Semantic_Stack.Peek().hasChildren())
+                        if (Semantic_Stack.Peek().isOperator() && /*!first &&*/ !Semantic_Stack.Peek().hasChildren())
                         {
                             OPN = Semantic_Stack.Pop();
                             first = true;
                         }
-                        else
+                        else //if (Semantic_Stack.Peek().isNum() || Semantic_Stack.Peek().isOperator())
                         {
                             tempN.AddFirst(Semantic_Stack.Pop());
-                        }
+                        }/*
+                        else
+                        {
+                            Semantic_Stack.Pop();
+                        }*/
                         Input_Stack.Pop();
                         State_Stack.Pop();
                     }
@@ -105,9 +109,10 @@ namespace Calculator
 
                 else if (Lact.getAction() == 4)     //Accept
                 {
-                    AST.TraverseTree();
+                    //AST.TraverseTreeBF();
+                    AST.Print();
                     return AST;
-                }
+                } 
 
                 else                                //Failure
                 {

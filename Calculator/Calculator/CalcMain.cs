@@ -17,7 +17,7 @@ namespace Calculator
             doc_lines.AddRange(File.ReadAllLines(@"..\..\Test3.inp"));
 
             XMLParser xmp = new XMLParser();
-            xmp.parseAll();
+            xmp.parseAll(); 
             GoldParserTables GPtables = new GoldParserTables();
             GPtables = xmp.getGPBTables();
 
