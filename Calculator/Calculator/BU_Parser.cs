@@ -29,10 +29,10 @@ namespace Calculator
             LALRAction Lact = Lstate.getActMatchesIndex(Current.getTokenSymbol());
 
             int i = 0;
-            while(State_Stack.Count >0 || Input_Stack.Count > 0)
+            while (State_Stack.Count > 0 || Input_Stack.Count > 0)
             {
                 //Pulls state obj for current state (vert on table)
-                Lstate = lalrTable[State_Stack.Peek()];             
+                Lstate = lalrTable[State_Stack.Peek()];
                 //Action corresponds to incoming input (horizontal on table
                 Lact = Lstate.getActMatchesIndex(Current.getTokenSymbol());
 
@@ -42,7 +42,10 @@ namespace Calculator
                     current_state = Lact.getValue();            //New state becomes the value of the action
                     State_Stack.Push(Lact.getValue());          //push onto stack
                     Input_Stack.Push(Current);                  //Input Token gets pushed on, wraps to beginning for next Token
-                    Semantic_Stack.Push(TempN);
+                    //if (TempN.isOperator() || TempN.isNum())
+                    //{
+                        Semantic_Stack.Push(TempN);
+                    //}
                     Current = TStream.getNextToken(i);
                     i++;
                 }
@@ -78,19 +81,22 @@ namespace Calculator
                         State_Stack.Pop();
                     }
                     Input_Stack.Push(tempT);
-                    if (prodTable[ProdInd].getProd_SymCount() == 3)
+                    if (prodTable[ProdInd].getProd_SymCount() > 1)
                     {
                         Semantic_Stack.Push(AST.makeTree(OPN, tempN));
-                    }
-                    else if(prodTable[ProdInd].getProd_SymCount() == 2)
+                    }/*
+                    else if (prodTable[ProdInd].getProd_SymCount() == 2)
                     {
                         Semantic_Stack.Push(AST.makeTree(OPN, tempN));
-                    }
-                    else //if(prodTable[ProdInd].getProd_SymCount() == 1)
+                    }*/
+                    else if (prodTable[ProdInd].getProd_SymCount() == 1)
                     {
-                        Node temp2 = new Node(tempT);
-                        Semantic_Stack.Push(AST.makeTree(temp2, tempN));
-                        //Semantic_Stack.Push(tempN.ElementAt(0));
+                        //Node temp2 = new Node(tempT);
+                        //Semantic_Stack.Push(AST.makeTree(temp2, tempN));
+                        if (tempN.Count > 0)
+                            Semantic_Stack.Push(tempN.ElementAt(0));
+                        else
+                            Semantic_Stack.Push(OPN);
                     }
 
                     //The new state is what's left on the State Stack
@@ -112,7 +118,7 @@ namespace Calculator
                     //AST.TraverseTreeBF();
                     AST.Print();
                     return AST;
-                } 
+                }
 
                 else                                //Failure
                 {

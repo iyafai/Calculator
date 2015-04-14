@@ -88,6 +88,12 @@ namespace Calculator
             return this.Content.isOperator();
         }
 
+        public bool isInProd(int symInd)
+        {
+            if (this.Content.getTokenSymbol() == symInd)    {   return true;    }
+            else                                            {   return false;   }
+        }
+
         public void PrintTree(string indent, bool last)
         {
             Console.Write(indent);
