@@ -38,13 +38,14 @@ namespace Calculator
 
                 if (Lact.getAction() == 1)                      //Shift
                 {
+                    Console.Out.Write("Shift Operation Pushing {0} going to state {1}\n", Current.getTokenName(),Lact.getValue());
                     Node TempN = new Node(Current);
                     current_state = Lact.getValue();            //New state becomes the value of the action
                     State_Stack.Push(Lact.getValue());          //push onto stack
                     Input_Stack.Push(Current);                  //Input Token gets pushed on, wraps to beginning for next Token
                     //if (TempN.isOperator() || TempN.isNum())
                     //{
-                        Semantic_Stack.Push(TempN);
+                    //    Semantic_Stack.Push(TempN);
                     //}
                     Current = TStream.getNextToken(i);
                     i++;
@@ -52,6 +53,7 @@ namespace Calculator
 
                 else if (Lact.getAction() == 2)                 //Reduce
                 {
+                    
                     //grabs production with index given from LALR Action
                     int ProdInd = Lact.getValue();
                     //saves the Non-Terminal Index for creating a new token for pushing on the stack
@@ -61,18 +63,19 @@ namespace Calculator
                     LinkedList<Node> tempN = new LinkedList<Node>();
                     Node OPN = null;
                     bool first = false;
-
+                    Console.Out.Write("Reduce Operation at State: {2} {0} elements, {1} NT replaces: ", prodTable[ProdInd].getProd_symIndices().Count, symTable[NTind].getSymbolTableName(), current_state);
                     foreach (int sym in prodTable[ProdInd].getProd_symIndices())
                     {
-                        if (Semantic_Stack.Peek().isOperator() && /*!first &&*/ !Semantic_Stack.Peek().hasChildren())
-                        {
+                        Console.Out.Write(" {0} ", symTable[sym].getSymbolTableName());
+                     // if (Semantic_Stack.Peek().isOperator() && /*!first &&*/ !Semantic_Stack.Peek().hasChildren())
+                        /*{
                             OPN = Semantic_Stack.Pop();
                             first = true;
                         }
                         else //if (Semantic_Stack.Peek().isNum() || Semantic_Stack.Peek().isOperator())
                         {
                             tempN.AddFirst(Semantic_Stack.Pop());
-                        }/*
+                        }
                         else
                         {
                             Semantic_Stack.Pop();
@@ -80,7 +83,8 @@ namespace Calculator
                         Input_Stack.Pop();
                         State_Stack.Pop();
                     }
-                    Input_Stack.Push(tempT);
+                    Console.Out.Write("\n");
+                    Input_Stack.Push(tempT);/*
                     if (prodTable[ProdInd].getProd_SymCount() > 1)
                     {
                         Semantic_Stack.Push(AST.makeTree(OPN, tempN));
@@ -88,7 +92,7 @@ namespace Calculator
                     else if (prodTable[ProdInd].getProd_SymCount() == 2)
                     {
                         Semantic_Stack.Push(AST.makeTree(OPN, tempN));
-                    }*/
+                    }
                     else if (prodTable[ProdInd].getProd_SymCount() == 1)
                     {
                         //Node temp2 = new Node(tempT);
@@ -97,7 +101,7 @@ namespace Calculator
                             Semantic_Stack.Push(tempN.ElementAt(0));
                         else
                             Semantic_Stack.Push(OPN);
-                    }
+                    }*/
 
                     //The new state is what's left on the State Stack
                     Lstate = lalrTable[State_Stack.Peek()];
@@ -115,8 +119,9 @@ namespace Calculator
 
                 else if (Lact.getAction() == 4)     //Accept
                 {
+                    Console.Out.Write("Accept State with State={0}\n",current_state);
                     //AST.TraverseTreeBF();
-                    AST.Print();
+                    //AST.Print();
                     return AST;
                 }
 
