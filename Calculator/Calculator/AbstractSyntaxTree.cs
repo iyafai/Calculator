@@ -18,15 +18,6 @@ namespace Calculator
         {
             this.Head = OP;
             this.Head.setChildren(Chld);
-
-            //foreach(Node n in Chld)
-            //{
-            //    if (this.Children == null)
-            //        this.Children.AddFirst(n);
-            //    else
-            //        this.Children.AddLast(n);
-            //}
-            
             return Head;
         }
 
@@ -39,10 +30,6 @@ namespace Calculator
 
             while (Next.Count > 0)
             {
-               /* foreach (Node k in Next)
-                {
-                    Console.Out.Write("Name: {0}", k.getToken().getTokenName());//, k.getType());
-                }*/
                 Console.Out.Write("{0} \n",Next.Peek().getToken().getTokenName());
                 Visited.AddFirst(Head);
                 foreach (Node n in Next.Pop().getChildren())
@@ -51,8 +38,6 @@ namespace Calculator
                     Console.Out.Write("{0} ", n.getToken().getTokenName());
                 }
                 Console.Out.Write("\n\n");
-                //Next.Pop();
-
             }
         }
 
@@ -65,11 +50,6 @@ namespace Calculator
 
             while (Next.Count > 0)
             {
-                /* foreach (Node k in Next)
-                 {
-                     Console.Out.Write("Name: {0}", k.getToken().getTokenName());//, k.getType());
-                 }*/
-                //Console.Out.Write("{0} \n", Next.Peek().getToken().getTokenName());
                 Visited.AddFirst(Head);
                 Node Parent = Next.Dequeue();
                 foreach (Node n in Parent.getChildren())
@@ -78,8 +58,6 @@ namespace Calculator
                     Console.Out.Write("{0} ", n.getToken().getTokenName());
                 }
                 Console.Out.Write("\n\n");
-                //Next.Pop();
-
             }
         }
 
@@ -88,22 +66,35 @@ namespace Calculator
             Head.PrintTree(" ", true);
         }
         /*
-        public Node make_2L_tree(Node op, Node left, Node right)
+        public AbstractSyntaxTree trimTree()
         {
-            this.Head = op;
-            op.setLeftChild(left);
-            op.setRightChild(right);
 
-            return this.Head;
-        }
-
-        public Node make_1L_tree(Node op, Node left)
-        {
-            this.Head = op;
-            op.setLeftChild(left);
-
-            return this.Head;
         }*/
+        /*
+        public AbstractSyntaxTree buildTree(Stack<Node> SemanticStack)
+        {
+            LinkedList<Node> temp = new LinkedList<Node>();
+            AbstractSyntaxTree A = this;
+            while (SemanticStack.Count > 1)
+            {
+                if (SemanticStack.Peek().isNum() || (SemanticStack.Peek().isOperator() && SemanticStack.Peek().hasChildren()))
+                {
+                    temp.AddFirst(SemanticStack.Pop());
+                }
+                else if (SemanticStack.Peek().isOperator() && temp.Count>1)
+                {
+                    SemanticStack.Push(A.makeTree(SemanticStack.Pop(), temp));
+                }
+                else if (SemanticStack.Peek().isOperator())
+                {
+                    Node OPN = SemanticStack.Pop();
+                    temp.AddFirst(SemanticStack.Pop());
+                    SemanticStack.Push(A.makeTree(OPN, temp));
+                }
 
+            }
+            A.makeTree(A.Head, temp);
+            return A;
+        }*/
     }
 }

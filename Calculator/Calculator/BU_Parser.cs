@@ -43,7 +43,10 @@ namespace Calculator
                     current_state = Lact.getValue();            //New state becomes the value of the action
                     State_Stack.Push(Lact.getValue());          //push onto stack
                     Input_Stack.Push(Current);                  //Input Token gets pushed on, wraps to beginning for next Token
-                    Semantic_Stack.Push(TempN);
+                    //if (TempN.isOperator() || TempN.isNum())
+                    //{
+                        Semantic_Stack.Push(TempN);
+                    //}
                     Current = TStream.getNextToken(i);
                     i++;
                 }
@@ -67,13 +70,16 @@ namespace Calculator
                     foreach (int sym in prodTable[ProdInd].getProd_symIndices())
                     {
                         Console.Out.Write(" {0} ", symTable[sym].getSymbolTableName());
-                        if (Semantic_Stack.Peek().isOperator() && !Semantic_Stack.Peek().hasChildren())
+                        if (prodTable[ProdInd].getProd_SymCount() > 1)
                         {
-                            OPN = Semantic_Stack.Pop();
-                        }
-                        else
-                        {
-                            tempN.AddFirst(Semantic_Stack.Pop());
+                            if (Semantic_Stack.Peek().isOperator() && !Semantic_Stack.Peek().hasChildren())
+                            {
+                                OPN = Semantic_Stack.Pop();
+                            }
+                            else
+                            {
+                                tempN.AddFirst(Semantic_Stack.Pop());
+                            }
                         }
                         Input_Stack.Pop();
                         State_Stack.Pop();
@@ -83,19 +89,30 @@ namespace Calculator
                     Input_Stack.Push(tempT);
                     if (prodTable[ProdInd].getProd_SymCount() > 1)
                     {
+                        LinkedList<Node>tempQ = new LinkedList<Node>();
+                        int lim = tempN.Count;
+                        int[] rem = new int[lim];
+                        foreach (Node n in tempN)
+                        {
+                            if (!n.isCrap())
+                            {
+                                tempQ.AddFirst(n);
+                            }
+                        }
+
                         if (OPN == null)
                         {
-                            Semantic_Stack.Push(AST.makeTree(tempF,tempN));
+                            Semantic_Stack.Push(AST.makeTree(tempF,tempQ));
                         }
                         else
                         {
-                            Semantic_Stack.Push(AST.makeTree(OPN,tempN));
+                            Semantic_Stack.Push(AST.makeTree(OPN,tempQ));
                         }
-                    }
+                    }/*
                     else if(prodTable[ProdInd].getProd_SymCount() == 1)
                     {
                         Semantic_Stack.Push(AST.makeTree(tempF, tempN));
-                    }
+                    }*/
 
                     //The new state is what's left on the State Stack
                     Lstate = lalrTable[State_Stack.Peek()];
@@ -115,6 +132,8 @@ namespace Calculator
                 {
                     Console.Out.Write("Accept State with State={0}\n",current_state);
                     //AST.TraverseTreeBF();
+                    
+                    //AST.buildTree(Semantic_Stack);
                     AST.Print();
                     return AST;
                 }

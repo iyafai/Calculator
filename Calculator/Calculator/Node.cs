@@ -83,6 +83,17 @@ namespace Calculator
             return false;
         }
 
+        public bool isCrap()
+        {
+            int[] Ncheck = { 4 , 12 , 16 , 17 };
+            foreach (int s in Ncheck)
+            {
+                if (this.Content.getTokenSymbol() == s)
+                    return true;
+            }
+            return false;
+        }
+
         public bool isOperator()
         {
             return this.Content.isOperator();
