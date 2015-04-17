@@ -83,7 +83,7 @@ namespace Calculator
             return false;
         }
 
-        public bool isCrap()
+        public bool isUnNeeded()
         {
             int[] Ncheck = { 4 , 12 , 16 , 17 };
             foreach (int s in Ncheck)

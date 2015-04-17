@@ -87,18 +87,32 @@ namespace Calculator
 
                     Console.Out.Write("\n");
                     Input_Stack.Push(tempT);
-                    if (prodTable[ProdInd].getProd_SymCount() > 1)
+                    //Check for negating numbers, replaces on tree with -1 * number, makes calculating easier
+                    if (prodTable[ProdInd].getProd_SymCount() == 2 && prodTable[ProdInd].getProd_symIndices().Contains(18))
+                    {
+                        //Create some new tokens for negation subtree
+                        OPN = new Node(new Token("*", 14, true));
+                        //tempN will already contain the number being negated, so just add the -1 as the 2nd child
+                        tempN.AddLast(new Node(new Token("-1", 9, true)));
+                        Semantic_Stack.Push(AST.makeTree(OPN, tempN));
+                    }
+                    
+                    //When SymCount==1 it's just a NonTerminal subbing for a Terminal so we ignore those cases
+                    else if (prodTable[ProdInd].getProd_SymCount() > 1)
                     {
                         LinkedList<Node>tempQ = new LinkedList<Node>();
                         int lim = tempN.Count;
                         int[] rem = new int[lim];
+                        //Trim Useless Characters namely: ( ) , and ;
                         foreach (Node n in tempN)
                         {
-                            if (!n.isCrap())
+                            if (!n.isUnNeeded())
                             {
                                 tempQ.AddFirst(n);
                             }
                         }
+                        //This is used for cases where an expression is represented as (expression)
+                        //We don't need it to be 
                         if (tempQ.Count > 1)
                         {
                             if (OPN == null)
@@ -114,11 +128,7 @@ namespace Calculator
                         {
                             Semantic_Stack.Push(tempQ.ElementAt(0));
                         }
-                    }/*
-                    else if(prodTable[ProdInd].getProd_SymCount() == 1)
-                    {
-                        Semantic_Stack.Push(AST.makeTree(tempF, tempN));
-                    }*/
+                    }
 
                     //The new state is what's left on the State Stack
                     Lstate = lalrTable[State_Stack.Peek()];

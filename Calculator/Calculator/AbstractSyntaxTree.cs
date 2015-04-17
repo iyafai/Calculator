@@ -108,6 +108,7 @@ namespace Calculator
                     {
                         varInput[i] = Calc.Peek().getToken().getTokenName();
 
+                        //Pulls Variable off Stack
                         if (Calc.Peek().getToken().getTokenSymbol() == 10)
                         {
                             string st = "";
@@ -122,20 +123,18 @@ namespace Calculator
                             }
                             Calc.Pop();
                         }
+                        //Pulls Integer off Stack Converts to Double
                         else if (Calc.Peek().getToken().getTokenSymbol() == 11)
                         {
                             varValue[i] = Double.Parse(Calc.Pop().getToken().getTokenName(), System.Globalization.NumberStyles.Integer);
                         }
-                        else if (Calc.Peek().getToken().getTokenSymbol() != 8)
+                        //If All else fails saves as float (exp, decimal, negative number)
+                        else 
                         {
-                            varValue[i] = Double.Parse(Calc.Pop().getToken().getTokenName());
+                            string input = Calc.Pop().getToken().getTokenName();
+                            varValue[i] = Double.Parse(input, System.Globalization.NumberStyles.Float);
                             //var2 = Double.Parse(Calc.Pop().getToken().getTokenName());
                         }
-                        else
-                        {
-                            varValue[i] = Double.Parse(Calc.Pop().getToken().getTokenName(), System.Globalization.NumberStyles.Float);
-                        }
-                        //Calc.Pop();
                     }
                 }
                 if (CStack.Peek().getToken().getTokenSymbol() == 3)             //Addition
