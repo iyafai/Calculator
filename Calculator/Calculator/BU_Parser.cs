@@ -78,7 +78,7 @@ namespace Calculator
                             }
                             else
                             {
-                                tempN.AddFirst(Semantic_Stack.Pop());
+                                tempN.AddLast(Semantic_Stack.Pop());
                             }
                         }
                         Input_Stack.Pop();
@@ -99,14 +99,20 @@ namespace Calculator
                                 tempQ.AddFirst(n);
                             }
                         }
-
-                        if (OPN == null)
+                        if (tempQ.Count > 1)
                         {
-                            Semantic_Stack.Push(AST.makeTree(tempF,tempQ));
+                            if (OPN == null)
+                            {
+                                Semantic_Stack.Push(AST.makeTree(tempF, tempQ));
+                            }
+                            else
+                            {
+                                Semantic_Stack.Push(AST.makeTree(OPN, tempQ));
+                            }
                         }
                         else
                         {
-                            Semantic_Stack.Push(AST.makeTree(OPN,tempQ));
+                            Semantic_Stack.Push(tempQ.ElementAt(0));
                         }
                     }/*
                     else if(prodTable[ProdInd].getProd_SymCount() == 1)

@@ -14,7 +14,15 @@ namespace Calculator
             //string result = "Calculator.out";
             //pulls each line from the file and adds to its own string in the List
             List<string> doc_lines = new List<string>();
-            doc_lines.AddRange(File.ReadAllLines(@"..\..\Test3.inp"));
+            if (args.Any())
+            {
+                doc_lines.AddRange(File.ReadAllLines(args[0]));//@"..\..\Test3.inp"));
+            }
+            else
+            {
+                doc_lines.AddRange(File.ReadAllLines(@"..\..\Test3.inp"));
+            }
+            Dictionary<string, string> varTable = new Dictionary<string, string>();
 
             XMLParser xmp = new XMLParser();
             xmp.parseAll(); 
@@ -28,14 +36,22 @@ namespace Calculator
             //These keep track of which token, which error, which line and column we're at
 
             //Magic Time
+            BU_Parser BP = new BU_Parser();
             foreach (string eq in doc_lines)
             {
                 TStream = LA.getTokenStream(GPtables,eq);
+                AbstractSyntaxTree line1 = BP.ParseStream(GPtables, TStream);
+                line1.Calculate(varTable);
             }
 
-            BU_Parser BP = new BU_Parser();
-            AbstractSyntaxTree line1 = BP.ParseStream(GPtables, TStream);
             
+            
+            //varTable.Add("x1", "2");
+            
+            //Stack<Node> CStack = line1.buildCalcStack(varTable);
+
+            Console.WriteLine("Press any key to close...");
+            Console.ReadKey();
         }
     }
 
