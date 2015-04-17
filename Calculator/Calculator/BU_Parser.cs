@@ -12,7 +12,7 @@ namespace Calculator
         private string result;
         public void createOutput(string path)
         {
-            result = @".\ETC\"+path+"Parse.out";
+            result = @".\Output\extra\" + path + "Parse.out";
             if (File.Exists(result))
             {
                 File.Delete(result);

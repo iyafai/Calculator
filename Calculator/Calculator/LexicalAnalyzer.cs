@@ -1,6 +1,4 @@
-﻿//Imran Yafai
-//Theory of Computation - Lexical Analyzer
-using Calculator.XML;
+﻿using Calculator.XML;
 using System.IO;
 using System.Text;
 using System.Collections.Generic;
@@ -11,11 +9,26 @@ namespace Calculator
 {
     class LexicalAnalyzer
     {
+        private string result;
+        public void createOutput(string path)
+        {
+            result = @".\Output\extra\" + path + "LexAn.out";
+            if (File.Exists(result))
+            {
+                File.Delete(result);
+            }
+            Console.Out.Write("Lexical Analyzer Results Printed to: {0}\n", result);
+        }
         public TokenStream getTokenStream(GoldParserTables GPtables, string input)
         {
             int init_state = GPtables.getInitialDFAState();         //convenience for going back to beginning of DFA
 			int state_tran = init_state;                            //keeps track of where we're going (initial value doesn't matter)
 			DFAState state = GPtables.getDFATable()[init_state];    //state to begin with
+            int count = 1, fail_count = 1, line_count = 1, col_count = 1, col_at = 1;
+            List<string> AcceptPrint = new List<string>();      //to keep track of Accepted Tokens for printing at the end
+            List<string> FailPrint = new List<string>();        //to keep track of Failed   Tokens for printing at the end
+            string A_form = "[{0,5}] {1,10} {2,10} {3,-8}";
+            string F_form = "[{0,5}] {1,-5} {2,-3} {3,-3} Unrecognized character: {4,5}";
 
             TokenStream TStream = new TokenStream();
 			string token = "";                                      //keeps track of the token we grab from the file
@@ -33,10 +46,12 @@ namespace Calculator
 				}
 				if (!check)                             //if it isn't it's skipped and added to the printout as an error
 				{
-                    test.setTokenName(input[i].ToString());
-                    test.setTokenSymbol(-1);
-                    test.setTokenInValid();
-                    TStream.AddToken(test);
+                    FailPrint.Add(string.Format(F_form, fail_count, "At", line_count + ",", (col_count - 1) + ":", input[i]));
+                    AcceptPrint.Add(string.Format(A_form, count, "Error", "Unrecognized character: " + input[i], "at " + line_count + "," + col_count));
+                    count++;
+                    fail_count++;
+                    TStream.AddToken(new Token(input[i].ToString(),-1,false,col_count));
+                    col_count++;
 					continue;   //skips following code and moves on to next element in loop
 				}
 
@@ -57,12 +72,16 @@ namespace Calculator
 				if (edgeC == state.getEdgeCount())      //if we've exhausted all edges we arrive here 
 				{
 					i--;            //Since we didn't add the current character (due to no transitions) we backtrack a bit in here. 
+                    col_count--;
 					if (state.getAcceptSymbolIndex() == -1)     //No acceptance, token is added to error printout
 					{
-                        test.setTokenName(token);
-                        test.setTokenSymbol(-1);
-                        test.setTokenInValid();
-                        TStream.AddToken(test);
+                        col_at = (col_count - token.Length + 1);
+                        string temp = "[{0,5}] {1,-5} {2,-3} {3,-3} Unrecognized character: {4,5}";
+                        FailPrint.Add(string.Format(temp, fail_count, "At", line_count + ",", col_at + ":", input[i]));
+                        AcceptPrint.Add(string.Format(A_form, count, "Error", "Unrecognized character: " + input[i], "at " + line_count + "," + col_at));
+                        count++;
+                        fail_count++;
+                        TStream.AddToken(new Token(token, -1, false, col_at));
 						state = GPtables.getDFATable()[init_state];
 					}
 
@@ -71,10 +90,10 @@ namespace Calculator
 						symbol = state.getAcceptSymbolIndex();
 						if (symbol != 2)                        //who cares about white space anyhow
 						{
-                            test.setTokenName(token);
-                            test.setTokenSymbol(symbol);
-                            test.setTokenInValid();
-                            TStream.AddToken(test);
+                            col_at = (col_count - token.Length + 1);
+                            string token_name = GPtables.getSymbolTable()[symbol].getSymbolTableName();
+                            AcceptPrint.Add(string.Format(A_form, count, token_name, token, "at " + line_count + "," + col_at));
+                            TStream.AddToken(new Token(token, symbol, true, col_at));
 						}
 						state_tran = init_state;  //change new state back to initial
 					}
@@ -89,13 +108,22 @@ namespace Calculator
 					//in retrospect I might be making a bad assumption here, need to check back later
 					if (symbol != 2)    //once again ignoring white space
 					{
-                        test.setTokenName(token);
-                        test.setTokenSymbol(symbol);
-                        test.setTokenInValid();
-                        TStream.AddToken(test);
+                        col_at = (col_count - token.Length + 1);
+                        string token_name = GPtables.getSymbolTable()[symbol].getSymbolTableName();
+                        AcceptPrint.Add(string.Format(A_form, count, token_name, token, "at " + line_count + "," + col_at));
+                        TStream.AddToken(new Token(token,symbol,true,col_at));
 					}
 				}
+                col_count++;
 			}
+            string[] Header = { "Token List:", "", string.Format("{0,7} {1,10} {2,10} {3,8}", "#", "Type", "Value", "Location") };
+            string[] E_Header = { "", "Errors:", "" };
+
+            //print everything out all nice and neat
+            File.WriteAllLines(result, Header);
+            File.AppendAllLines(result, AcceptPrint);
+            File.AppendAllLines(result, E_Header);
+            File.AppendAllLines(result, FailPrint);
             return TStream;
 		}
     }

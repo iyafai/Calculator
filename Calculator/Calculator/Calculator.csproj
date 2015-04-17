@@ -50,10 +50,12 @@
     <Compile Include="AbstractSyntaxTree.cs" />
     <Compile Include="DFAEdge.cs" />
     <Compile Include="DFAState.cs" />
+    <Compile Include="FileMaker.cs" />
     <Compile Include="GoldParserTables.cs" />
     <Compile Include="LALRAction.cs" />
     <Compile Include="LexicalAnalyzer.cs" />
     <Compile Include="Node.cs" />
+    <Compile Include="ParseErrorException.cs" />
     <Compile Include="RuleTableMember.cs" />
     <Compile Include="LALRState.cs" />
     <Compile Include="Properties\Resources.Designer.cs">

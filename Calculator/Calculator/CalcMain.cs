@@ -19,7 +19,8 @@ namespace Calculator
 
             //string result = "Calculator.out";
             //pulls each line from the file and adds to its own string in the List
-            System.IO.Directory.CreateDirectory(@".\ETC");
+            System.IO.Directory.CreateDirectory(@".\Output");
+            System.IO.Directory.CreateDirectory(@".\Output\extra");
 
             foreach (string test in args)
             {
@@ -49,6 +50,8 @@ namespace Calculator
                 }
                 BU_Parser BP = new BU_Parser();
                 BP.createOutput(fname);
+                LexicalAnalyzer LA = new LexicalAnalyzer();
+                LA.createOutput(fname);
                 foreach (string eq in doc_lines)
                 {
                     if (eq.Length > maxFormat)
@@ -57,10 +60,17 @@ namespace Calculator
                     }
                     printline1 = eq;
                     printout_FH.Add(eq);
-                    LexicalAnalyzer LA = new LexicalAnalyzer();
+                    
                     TokenStream TStream = LA.getTokenStream(GPtables, eq);
-                    AbstractSyntaxTree line1 = BP.ParseStream(GPtables, TStream);
-                    line1.Calculate(varTable);
+                    //AbstractSyntaxTree line1 = BP.ParseStream(GPtables, TStream);
+                    try
+                    {
+                        BP.ParseStream(GPtables, TStream).Calculate(varTable);
+                    }
+                    catch (ParseErrorException e)
+                    {
+                        Console.Out.Write(e.Message);
+                    }
                 }
 
                 File.WriteAllText(result, "Variables: \n");

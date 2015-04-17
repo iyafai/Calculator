@@ -103,7 +103,7 @@ namespace Calculator
                 }
                 else if (CStack.Peek().getToken().getTokenSymbol() == 5)        //divisor
                 {
-                    result = (int)(varValue[1] / varValue[0]);
+                    result = (int)(Math.Abs(varValue[1]) / Math.Floor(Math.Abs(varValue[0])));
                 }
                 else if (CStack.Peek().getToken().getTokenSymbol() == 6)        //divide
                 {
@@ -116,7 +116,7 @@ namespace Calculator
                 }
                 else if (CStack.Peek().getToken().getTokenSymbol() == 13)        //Modulo
                 {
-                    result = (varValue[1] % varValue[0]);
+                    result = (Math.Abs(varValue[1]) % Math.Floor(Math.Abs(varValue[0])));
                 }
                 else if (CStack.Peek().getToken().getTokenSymbol() == 14)        //Multiplication
                 {

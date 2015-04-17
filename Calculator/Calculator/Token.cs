@@ -10,6 +10,7 @@ namespace Calculator
         private string token_name;
         private int symbol;
         private bool valid;
+        private int col_loc;
 
         public Token()
         {
@@ -25,6 +26,14 @@ namespace Calculator
             valid = val;
         }
 
+        public Token(string name, int sym, bool val, int cc)
+        {
+            token_name = name;
+            symbol = sym;
+            valid = val;
+            col_loc = cc;
+        }
+
         public void     setTokenName(string name)   {   token_name = name;  }
         public void     setTokenSymbol(int sym)     {   symbol = sym;       }
         public void     setTokenValid()             {   valid = true;       }
@@ -33,6 +42,7 @@ namespace Calculator
         public bool     isTokenValid()              {   return valid;       }
         public string   getTokenName()              {   return token_name;  }
         public int      getTokenSymbol()            {   return symbol;      }
+        public int      getTokenLoc()               {   return col_loc; }
 
         public bool isOperator()
         {
