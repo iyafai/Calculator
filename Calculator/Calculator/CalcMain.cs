@@ -11,47 +11,75 @@ namespace Calculator
     {
         public static void Main(string[] args)
         {
+            string ast = "************************************";
+            XMLParser xmp = new XMLParser();
+            xmp.parseAll();
+            GoldParserTables GPtables = xmp.getGPBTables();     //Symbol, Rule, Parse, DFA and CharSet Tables
+            
+
             //string result = "Calculator.out";
             //pulls each line from the file and adds to its own string in the List
-            List<string> doc_lines = new List<string>();
-            if (args.Any())
+            System.IO.Directory.CreateDirectory(@".\ETC");
+
+            foreach (string test in args)
             {
-                doc_lines.AddRange(File.ReadAllLines(args[0]));//@"..\..\Test3.inp"));
+                Dictionary<string, string> varTable = new Dictionary<string, string>();     //Stores variable values
+                List<string> doc_lines = new List<string>();        //Contains each Equation from file as a seperate string
+                List<string> printout_FH = new List<string>();
+                List<string> printout_SH = new List<string>();
+                string fname = Path.GetFileNameWithoutExtension(test);
+                string result = fname+".out";
+                string printline1 = "";
+                int maxFormat = 0;
+                List<string> Footer = new List<string>();
+                Footer.Add(ast);
+                Footer.Add("Symbol Table");
+                Footer.Add(ast);
+
+                try
+                {
+                    doc_lines.AddRange(File.ReadAllLines(test));//@"..\..\Test3.inp"));
+                }
+                catch(Exception ex)
+                {
+                    if (ex is FileNotFoundException || ex is FieldAccessException)
+                    {
+                        System.Console.Out.Write("{0}\n", ex.Message);
+                    }
+                }
+                BU_Parser BP = new BU_Parser();
+                BP.createOutput(fname);
+                foreach (string eq in doc_lines)
+                {
+                    if (eq.Length > maxFormat)
+                    {
+                        maxFormat = eq.Length;
+                    }
+                    printline1 = eq;
+                    printout_FH.Add(eq);
+                    LexicalAnalyzer LA = new LexicalAnalyzer();
+                    TokenStream TStream = LA.getTokenStream(GPtables, eq);
+                    AbstractSyntaxTree line1 = BP.ParseStream(GPtables, TStream);
+                    line1.Calculate(varTable);
+                }
+
+                File.WriteAllText(result, "Variables: \n");
+                int linecount=0;
+                foreach(KeyValuePair<string,string> temp in varTable)
+                {
+                    string printline = string.Format("{0,-"+maxFormat+"} => {1}", printout_FH.ElementAt(linecount), temp.Value);
+                    Footer.Add(string.Format("{0,-5}: {1}", temp.Key, temp.Value));
+                    printout_SH.Add(printline);//printout_FH.ElementAt(i)+" => "+printline);
+                    linecount++;
+                }
+                File.AppendAllLines(result, printout_SH);
+                File.AppendAllLines(result,Footer);
+                Console.Out.Write("Results Printed to: {0}\n", @".\"+result);
+                //System.Diagnostics.Process.Start(result);
             }
-            else
-            {
-                doc_lines.AddRange(File.ReadAllLines(@"..\..\Test3.inp"));
-            }
-            Dictionary<string, string> varTable = new Dictionary<string, string>();
-
-            XMLParser xmp = new XMLParser();
-            xmp.parseAll(); 
-            GoldParserTables GPtables = new GoldParserTables();
-            GPtables = xmp.getGPBTables();
-
-            LexicalAnalyzer LA = new LexicalAnalyzer();
-            TokenStream TStream = new TokenStream();
-
-            //int count = 1, fail_count = 1, line_count = 1, col_count = 1, col_at = 1;
-            //These keep track of which token, which error, which line and column we're at
-
-            //Magic Time
-            BU_Parser BP = new BU_Parser();
-            foreach (string eq in doc_lines)
-            {
-                TStream = LA.getTokenStream(GPtables,eq);
-                AbstractSyntaxTree line1 = BP.ParseStream(GPtables, TStream);
-                line1.Calculate(varTable);
-            }
-
-            
-            
-            //varTable.Add("x1", "2");
-            
-            //Stack<Node> CStack = line1.buildCalcStack(varTable);
 
             Console.WriteLine("Press any key to close...");
-            Console.ReadKey();
+            Console.Read();
         }
     }
 

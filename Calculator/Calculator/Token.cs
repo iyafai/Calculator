@@ -25,13 +25,14 @@ namespace Calculator
             valid = val;
         }
 
-        public void setTokenName(string name)    { token_name = name; }
-        public void setTokenSymbol(int sym)      { symbol = sym; }
-        public void setTokenValid() { valid = true; }
-        public void setTokenInValid() { valid = false; }
-        public bool isTokenValid() { return valid; }
-        public string getTokenName()    {   return token_name;  }
-        public int getTokenSymbol()    { return symbol; }
+        public void     setTokenName(string name)   {   token_name = name;  }
+        public void     setTokenSymbol(int sym)     {   symbol = sym;       }
+        public void     setTokenValid()             {   valid = true;       }
+        public void     setTokenInValid()           {   valid = false;      }
+        public void     toggleValidity()            {   valid = !valid;     }
+        public bool     isTokenValid()              {   return valid;       }
+        public string   getTokenName()              {   return token_name;  }
+        public int      getTokenSymbol()            {   return symbol;      }
 
         public bool isOperator()
         {

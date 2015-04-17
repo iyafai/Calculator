@@ -3,20 +3,33 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Calculator.XML;
+using System.IO;
 
 namespace Calculator
 {
     class BU_Parser
     {
+        private string result;
+        public void createOutput(string path)
+        {
+            result = @".\ETC\"+path+"Parse.out";
+            if (File.Exists(result))
+            {
+                File.Delete(result);
+            }
+            Console.Out.Write("Parse Results Printed to: {0}\n", result);
+        }
         public AbstractSyntaxTree ParseStream(GoldParserTables GPTables, TokenStream TStream)
         {
-            Token Head = new Token("HEAD", 100, true);
-            Node HeadN = new Node(Head);
+            List<string> parser_results = new List<string>();
+            Node HeadN = new Node();
             AbstractSyntaxTree AST = new AbstractSyntaxTree(HeadN);
             List<LALRState> lalrTable = GPTables.getLALRTable();
             List<RuleTableMember> prodTable = GPTables.getRuleTable();
             List<SymbolTableMember> symTable = GPTables.getSymbolTable();
             List<CharSetTableMember> charTable = GPTables.getCharSetTable();
+            string ast = new String('*', 50);
+
             LALRState Lstate = lalrTable[0];
             Stack<int> State_Stack = new Stack<int>();
             Stack<Token> Input_Stack = new Stack<Token>();
@@ -28,7 +41,7 @@ namespace Calculator
             Token Next = TStream.getNextToken(current_state);
             LALRAction Lact = Lstate.getActMatchesIndex(Current.getTokenSymbol());
 
-            int i = 0;
+            int input_counter = 0;
             while (State_Stack.Count > 0 || Input_Stack.Count > 0)
             {
                 //Pulls state obj for current state (vert on table)
@@ -38,17 +51,14 @@ namespace Calculator
 
                 if (Lact.getAction() == 1)                      //Shift
                 {
-                    Console.Out.Write("Shift Operation Pushing {0} going to state {1}\n", Current.getTokenName(),Lact.getValue());
+                    parser_results.Add(string.Format("Shift at State:{0} Pushing {1}", current_state,Current.getTokenName()));
                     Node TempN = new Node(Current);
                     current_state = Lact.getValue();            //New state becomes the value of the action
                     State_Stack.Push(Lact.getValue());          //push onto stack
                     Input_Stack.Push(Current);                  //Input Token gets pushed on, wraps to beginning for next Token
-                    //if (TempN.isOperator() || TempN.isNum())
-                    //{
-                        Semantic_Stack.Push(TempN);
-                    //}
-                    Current = TStream.getNextToken(i);
-                    i++;
+                    Semantic_Stack.Push(TempN);
+                    Current = TStream.getNextToken(input_counter);
+                    input_counter++;
                 }
 
                 else if (Lact.getAction() == 2)                 //Reduce
@@ -62,14 +72,13 @@ namespace Calculator
                     Token tempT = new Token(symTable[NTind].getSymbolTableName(), NTind, true);
                     Node tempF = new Node(tempT);
                     LinkedList<Node> tempN = new LinkedList<Node>();
-                    Node OPN = null;
-                    bool first = false;
-                    int[] skip = { 4, 12, 16, 17, 19, 20, 21, 22, 23, 24, 25 };
-                    Console.Out.Write("Reduce Operation at State: {2} {0} elements, {1} NT replaces: ", 
-                        prodTable[ProdInd].getProd_symIndices().Count, symTable[NTind].getSymbolTableName(), current_state);
+                    Node OPN = new Node();
+
+                    parser_results.Add(string.Format("Reduce at State: {0}, {1} replaces: {2} terminals:", current_state, 
+                        symTable[NTind].getSymbolTableName(), prodTable[ProdInd].getProd_symIndices().Count));
                     foreach (int sym in prodTable[ProdInd].getProd_symIndices())
                     {
-                        Console.Out.Write(" {0} ", symTable[sym].getSymbolTableName());
+                        parser_results.Add(string.Format("\t\t{0} ", symTable[sym].getSymbolTableName()));
                         if (prodTable[ProdInd].getProd_SymCount() > 1)
                         {
                             if (Semantic_Stack.Peek().isOperator() && !Semantic_Stack.Peek().hasChildren())
@@ -85,7 +94,7 @@ namespace Calculator
                         State_Stack.Pop();
                     }
 
-                    Console.Out.Write("\n");
+                    //parser_results.Add("\n");
                     Input_Stack.Push(tempT);
                     //Check for negating numbers, replaces on tree with -1 * number, makes calculating easier
                     if (prodTable[ProdInd].getProd_SymCount() == 2 && prodTable[ProdInd].getProd_symIndices().Contains(18))
@@ -132,6 +141,7 @@ namespace Calculator
 
                     //The new state is what's left on the State Stack
                     Lstate = lalrTable[State_Stack.Peek()];
+
                     //After the Reduce we have a goto from the Non-Terminal Token
                     //Our current state becomes the Action Value from the LALR Action that matches the index
                     current_state = Lstate.getActMatchesIndex(NTind).getValue();
@@ -146,11 +156,10 @@ namespace Calculator
 
                 else if (Lact.getAction() == 4)     //Accept
                 {
-                    Console.Out.Write("Accept State with State={0}\n",current_state);
-                    //AST.TraverseTreeBF();
-                    
-                    //AST.buildTree(Semantic_Stack);
-                    AST.Print();
+                    parser_results.Add(string.Format("Accept State at State={0}",current_state));
+                    parser_results.Add(ast);
+                    File.AppendAllLines(result,parser_results);
+                    //AST.Print();
                     return AST;
                 }
 

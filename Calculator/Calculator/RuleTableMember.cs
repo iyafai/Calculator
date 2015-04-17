@@ -14,7 +14,6 @@ namespace Calculator
 
         public RuleTableMember(int index, int nonterminalIndex, int symbolCount, List<int> symbolIndices)
         {
-            // TODO: Complete member initialization
             this.index = index;
             this.nonterminalIndex = nonterminalIndex;
             this.symbolCount = symbolCount;

@@ -20,51 +20,11 @@ namespace Calculator
             this.Head.setChildren(Chld);
             return Head;
         }
-
-        public void TraverseTree()
-        {
-            Stack<Node> Next = new Stack<Node>();
-            LinkedList<Node> Visited = new LinkedList<Node>();
-
-            Next.Push(Head);
-
-            while (Next.Count > 0)
-            {
-                Console.Out.Write("{0} \n",Next.Peek().getToken().getTokenName());
-                Visited.AddFirst(Head);
-                foreach (Node n in Next.Pop().getChildren())
-                {
-                    Next.Push(n);
-                    Console.Out.Write("{0} ", n.getToken().getTokenName());
-                }
-                Console.Out.Write("\n\n");
-            }
-        }
-
-        public void TraverseTreeBF()
-        {
-            Queue<Node> Next = new Queue<Node>();
-            LinkedList<Node> Visited = new LinkedList<Node>();
-
-            Next.Enqueue(Head);
-
-            while (Next.Count > 0)
-            {
-                Visited.AddFirst(Head);
-                Node Parent = Next.Dequeue();
-                foreach (Node n in Parent.getChildren())
-                {
-                    Next.Enqueue(n);
-                    Console.Out.Write("{0} ", n.getToken().getTokenName());
-                }
-                Console.Out.Write("\n\n");
-            }
-        }
-
+        /*
         public void Print()
         {
             Head.PrintTree(" ", true);
-        }
+        }*/
 
         public void Calculate(Dictionary<string, string> varList)
         {
@@ -177,7 +137,7 @@ namespace Calculator
                 Calc.Push(tempN);
 
             }
-            Console.Out.Write("{0} = {1}\n", varInput[1], varInput[0]);
+            //Console.Out.Write("{0} = {1}\n", varInput[1], varInput[0]);
             //return v1;
         }
 

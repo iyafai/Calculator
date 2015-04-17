@@ -13,7 +13,6 @@ namespace Calculator
 
         public LALRState(int index, int actionCount, List<LALRAction> LALRActionList)
         {
-            // TODO: Complete member initialization
             this.index = index;
             this.actionCount = actionCount;
             this.LALRActionList = LALRActionList;

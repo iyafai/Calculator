@@ -11,6 +11,18 @@ namespace Calculator
         private Token Content;
         private LinkedList<Node> Children;
 
+        public Node()
+        {
+            this.Content = new Token();
+            this.Children = new LinkedList<Node>();
+        }
+
+        public Node(Token C)
+        {
+            this.Content = C;
+            this.Children = new LinkedList<Node>();
+        }
+
         public Node(Token C, LinkedList<Node> CH)
         {
             this.Content = C;
@@ -20,25 +32,9 @@ namespace Calculator
             }
         }
 
-        public Node(Token C)
-        {
-            this.Content = C;
-            this.Children = new LinkedList<Node>();
-        }
-
         public void setChildren(LinkedList<Node> CH)
         {
             this.Children = CH;
-        }
-
-        public void addChild_E(Node CH)
-        {
-            this.Children.AddLast(CH);
-        }
-
-        public void addChild_B(Node LC)
-        {
-            this.Children.AddFirst(LC);
         }
 
         public bool hasChildren()
@@ -54,23 +50,10 @@ namespace Calculator
             return this.Content;
         }
 
-        public string getType()
-        {
-            XMLParser xm = new XMLParser();
-            xm.parseAll();
-            GoldParserTables GPTables = xm.getGPBTables();
-            List<SymbolTableMember> symTable = GPTables.getSymbolTable();
-            return  symTable[this.Content.getTokenSymbol()].getSymbolTableName();
-        }
-
         public LinkedList<Node> getChildren()
         {
             return this.Children;
         }
-        //public void setRightChild(Node RC)
-        //{
-        //    this.RightChild = RC;
-        //}
 
         public bool isNum()
         {
@@ -101,10 +84,16 @@ namespace Calculator
 
         public bool isInProd(int symInd)
         {
-            if (this.Content.getTokenSymbol() == symInd)    {   return true;    }
-            else                                            {   return false;   }
+            if (this.Content.getTokenSymbol() == symInd)    
+            {   
+                return true;
+            }
+            else                                            
+            {   
+                return false;
+            }
         }
-
+        /*
         public void PrintTree(string indent, bool last)
         {
             Console.Write(indent);
@@ -122,6 +111,6 @@ namespace Calculator
 
             for (int i = 0; i < Children.Count; i++)
                 this.Children.ElementAt(i).PrintTree(indent, i == Children.Count - 1);
-        }
+        }*/
     }
 }
