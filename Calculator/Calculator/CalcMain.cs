@@ -42,6 +42,7 @@ namespace Calculator
                     if (ex is FileNotFoundException || ex is FieldAccessException)
                     {
                         System.Console.Out.Write("{0}\n", ex.Message);
+                        break;
                     }
                 }
 
