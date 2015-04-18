@@ -134,7 +134,8 @@ namespace Calculator
 					}
 				}
                 col_count++;
-			}
+            }
+            TStream.AddToken(new Token("EOF", 0, true, 1));
             return TStream;
 		}
     }

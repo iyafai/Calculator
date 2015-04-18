@@ -11,16 +11,17 @@ namespace Calculator
     {
         private string path;
         private GoldParserTables GPBTables;
+        private XmlDocument doc = new XmlDocument();
         //Constructor
         public XMLParser()
         {
-            path = @"..\..\GrammarFinal-T5.xml"; //for testing purpose.  Will actually pass.
             GPBTables = new GoldParserTables();
-
+            doc.LoadXml(Calculator.Properties.Resources.GrammarFinal_T5);
         }
         public XMLParser(string path)
         {
             this.path = path;
+            doc.Load(path);
             GPBTables = new GoldParserTables();
         }
 
@@ -43,8 +44,6 @@ namespace Calculator
         //Method to parse the SymbolTable
         public void parseSymbolTable()
         {
-            XmlDocument doc = new XmlDocument();
-            doc.Load(path);
             //Enter the tables.
             XmlNode table = doc.SelectSingleNode("Tables");
             //Enter the SymbolTable
@@ -72,8 +71,6 @@ namespace Calculator
         //Method to pare the RuleTable
         public void parseRuleTable()
         {
-            XmlDocument doc = new XmlDocument();
-            doc.Load(path);
             //Enter the tables.
             XmlNode table = doc.SelectSingleNode("Tables");
             //Enter the RulesTable
@@ -112,8 +109,6 @@ namespace Calculator
         //Method to parse the CharSetTable
         public void parseCharSetTable()
         {
-            XmlDocument doc = new XmlDocument();
-            doc.Load(path);
             //Enter the tables.
             XmlNode table = doc.SelectSingleNode("Tables");
             //Enter the CharSetTable
@@ -151,8 +146,6 @@ namespace Calculator
         //Method to parse the DFATable
         public void parseDFATable()
         {
-            XmlDocument doc = new XmlDocument();
-            doc.Load(path);
             //Enter the tables.
             XmlNode table = doc.SelectSingleNode("Tables");
             //Enter the DFATalbe
@@ -199,8 +192,6 @@ namespace Calculator
         //Method to parse the LALRTable
         public void parseLALRTable()
         {
-            XmlDocument doc = new XmlDocument();
-            doc.Load(path);
             //Enter the tables.
             XmlNode table = doc.SelectSingleNode("Tables");
             //Enter the LALRTable

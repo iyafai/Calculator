@@ -6,7 +6,8 @@ using Calculator.XML;
 using System.IO;
 using System.Xml;
 using System.Reflection;
-using Calculator.Properties;
+
+[assembly: AssemblyVersion("1.0.0.0")]
 
 namespace Calculator
 {
@@ -17,9 +18,7 @@ namespace Calculator
         public static void Main(string[] args)
         {
             string ast = "************************************";
-            string exePath = AppDomain.CurrentDomain.BaseDirectory;
-            string xmlpath = exePath+@"..\..\GrammarFinal-T5.xml";
-            XMLParser xmp = new XMLParser(xmlpath);
+            XMLParser xmp = new XMLParser();
             xmp.parseAll();
             GoldParserTables GPtables = xmp.getGPBTables();     //Symbol, Rule, Parse, DFA and CharSet Tables
             string p1 = Environment.CurrentDirectory;
@@ -56,7 +55,7 @@ namespace Calculator
                 File.WriteAllText(result, "Variables: \n");
                 foreach (string eq in doc_lines)
                 {
-                    if (eq.Length > maxFormat)
+                    if (eq.Length > maxFormat && eq.Length<80)
                     {
                         maxFormat = eq.Length;
                     }
