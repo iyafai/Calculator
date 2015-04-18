@@ -21,6 +21,9 @@ namespace Calculator
         public int getLALR_index() { return index; }
         public int getLALR_actionCount() {   return actionCount; }
         public List<LALRAction> getLALR_ActionList()   {   return LALRActionList; }
+
+        // Each item in LALRActionList has their own index, which corresponds to a token.
+        // This pulls the LALRAction that has that value as its index.
         public LALRAction getActMatchesIndex(int sym)
         {
             int count = 0;
@@ -37,11 +40,9 @@ namespace Calculator
             }
             catch (ArgumentOutOfRangeException)
             {
-                //Console.Out.Write("{0} on Checking LALR Table LALR_index:{1}, Action_Count: {2} ", this.getLALR_index(),
-                //    this.getLALR_actionCount(), e.Message);
+                // This gets handled in the parser where it throws a ParseException
                 return null;
             }
-            //return this.getLALR_ActionList()[count];
         }
     }
 }

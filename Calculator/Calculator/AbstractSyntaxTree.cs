@@ -28,128 +28,141 @@ namespace Calculator
 
         public void Calculate(Dictionary<string, string> varList)
         {
-            Stack<Node> CStack = new Stack<Node>();
-            Stack<Node> VStack = new Stack<Node>();
-            Stack<Node> Calc = new Stack<Node>();
+            // searchStack, visited and treeLoc are used for traversing the tree with a Depth-First Search.
+            // Nodes are stored in rpnStack in Reverse Polish Notation.
+            // Allowing the use of the postfix algorith to solve for a value.
+            // CalcStack taking the place of the stack in that algorithm.
+            Node treeLoc = this.Head;
             List<Node> visited = new List<Node>();
-            //double var1 = 0, var2 = 0;
+            Stack<Node> searchStack = new Stack<Node>();
+            Stack<Node> rpnStack = new Stack<Node>();
+            Stack<Node> calcStack = new Stack<Node>();
+
+            // varInput is used for storing and pulling variable names.
+            // varValue is for values used in the calculation.
             double[] varValue = new double[2];
             string[] varInput = new string[2];
             double result = 0;
-            Node temp = this.Head;
-            //Dictionary<string, string> v1 = new Dictionary<string, string>();
-            Token v1 = new Token();
 
-            VStack.Push(temp);
-            //CStack.Push(temp);
-            while (VStack.Count > 0)
+            searchStack.Push(treeLoc);
+            while (searchStack.Count > 0)
             {
-                temp = VStack.Pop();
-                if (!visited.Contains(temp))
+                treeLoc = searchStack.Pop();
+                if (!visited.Contains(treeLoc))
                 {
-                    visited.Add(temp);
-                    CStack.Push(temp);
-                    foreach (Node n in temp.getChildren())
+                    visited.Add(treeLoc);
+                    rpnStack.Push(treeLoc);
+                    foreach (Node n in treeLoc.getChildren())
                     {
-                        VStack.Push(n);
+                        searchStack.Push(n);
                     }
                 }
             }
 
-            while (CStack.Count > 0)
+            // Algorithm overview:
+            // Pulls numbers until it hits an operator
+            // pushes back onto stack the result of the operation on the top 2 numbers on the stack
+            while (rpnStack.Count > 0)
             {
-                while (CStack.Peek().isNum())
+                // RPN calculation, pulls numbers until it hits an operator
+                while (rpnStack.Peek().isNum())
                 {
-                    Calc.Push(CStack.Pop());
+                    calcStack.Push(rpnStack.Pop());
                 }
-                if (Calc.Count > 0)
+
+                if (calcStack.Count > 0)
                 {
                     for (int i = 0; i < 2; i++)
                     {
-                        varInput[i] = Calc.Peek().getToken().getTokenName();
+                        varInput[i] = calcStack.Peek().getToken().getTokenName();
 
-                        //Pulls Variable off Stack
-                        if (Calc.Peek().getToken().getTokenSymbol() == 10)
+                        // In the case of a variable as an operand
+                        if (calcStack.Peek().getToken().getTokenSymbol() == 10)
                         {
                             string st = "";
+                            // First tries pulling the variable from our dictionary
                             varList.TryGetValue(varInput[i], out st);
                             try
                             {
+                                // We try parsing it to a double, if it's NaN or Infinity we set it as 0.
                                 varValue[i] = Double.Parse(st);
                                 if (Double.IsInfinity(varValue[i]) || Double.IsNaN(varValue[i]))
                                 {
                                     varValue[i] = 0;
                                 }
                             }
+                            // In the case of a null (i.e. the variable isn't already set) it defaults to 0.
                             catch (ArgumentNullException)
                             {
                                 varValue[i] = 0;
                             }
-                            Calc.Pop();
+                            calcStack.Pop();
                         }
-                        //Pulls Integer off Stack Converts to Double
-                        else if (Calc.Peek().getToken().getTokenSymbol() == 11)
+                        // Pulls Integer off Stack Converts to Double
+                        else if (calcStack.Peek().getToken().getTokenSymbol() == 11)
                         {
-                            varValue[i] = Double.Parse(Calc.Pop().getToken().getTokenName(), System.Globalization.NumberStyles.Integer);
+                            varValue[i] = Double.Parse(calcStack.Pop().getToken().getTokenName(), System.Globalization.NumberStyles.Integer);
                         }
-                        //If All else fails saves as float (exp, decimal, negative number)
+                        // Everything else is considered a float (exp, decimal, negative number)
                         else 
                         {
-                            string input = Calc.Pop().getToken().getTokenName();
+                            string input = calcStack.Pop().getToken().getTokenName();
                             varValue[i] = Double.Parse(input, System.Globalization.NumberStyles.Float);
-                            //var2 = Double.Parse(Calc.Pop().getToken().getTokenName());
                         }
                     }
                 }
-                if (CStack.Peek().getToken().getTokenSymbol() == 3)             //Addition
-                {
-                    result = (varValue[1] + varValue[0]);
-                }
-                else if (CStack.Peek().getToken().getTokenSymbol() == 5)        //divisor
-                {
-                    if (Math.Floor(Math.Abs(varValue[0])) == 0)
-                    {
-                        result = Double.PositiveInfinity;
-                    }
-                    else
-                    {
-                        result = (int)(Math.Abs(varValue[1]) / Math.Floor(Math.Abs(varValue[0])));
-                    }
-                }
-                else if (CStack.Peek().getToken().getTokenSymbol() == 6)        //divide
-                {
-                    result = (varValue[1] / varValue[0]);
-                }
-                else if (CStack.Peek().getToken().getTokenSymbol() == 7)        //Equals
-                {
-                    string val = System.Convert.ToString(varValue[0]);
-                    varList.Add(varInput[1], val);
-                }
-                else if (CStack.Peek().getToken().getTokenSymbol() == 13)        //Modulo
-                {
-                    result = (Math.Abs(varValue[1]) % Math.Floor(Math.Abs(varValue[0])));
-                }
-                else if (CStack.Peek().getToken().getTokenSymbol() == 14)        //Multiplication
-                {
-                    result = (varValue[1] * varValue[0]);
-                }
-                else if (CStack.Peek().getToken().getTokenSymbol() == 15)        //Power
-                {
-                    result = Math.Pow(varValue[1],varValue[0]);
-                }
-                else if (CStack.Peek().getToken().getTokenSymbol() == 18)        //Subtraction
-                {
-                    result = (varValue[1] - varValue[0]);
-                }
-                //string res = "" + result;
-                Token tempT = new Token(System.Convert.ToString(result), 9, true);
-                Node tempN = new Node(tempT);
-                CStack.Pop();
-                Calc.Push(tempN);
 
+                // Checking operator and performing operation.
+                switch (rpnStack.Peek().getToken().getTokenSymbol())
+                {
+                    case 3:
+                        // Addition
+                        result = (varValue[1] + varValue[0]);
+                        break;
+                    case 5:    
+                        // Integer Division.
+                        if (Math.Floor(Math.Abs(varValue[0])) == 0)
+                        {
+                            // Otherwise it gives some wonky answer
+                            result = Double.PositiveInfinity;
+                        }
+                        else
+                        {
+                            result = (int)(Math.Abs(varValue[1]) / Math.Floor(Math.Abs(varValue[0])));
+                        }
+                        break;
+                    case 6:
+                        // Division
+                        result = (varValue[1] / varValue[0]);
+                        break;
+                    case 7:
+                        // Equals
+                        string val = System.Convert.ToString(varValue[0]);
+                        varList.Add(varInput[1], val);
+                        break;
+                    case 13:
+                        // Modulo
+                        result = (Math.Abs(varValue[1]) % Math.Floor(Math.Abs(varValue[0])));
+                        break;
+                    case 14:
+                        // Multiplication
+                        result = (varValue[1] * varValue[0]);
+                        break;
+                    case 15:
+                        // Power
+                        result = Math.Pow(varValue[1],varValue[0]);
+                        break;
+                    case 18:
+                        // Subtraction
+                        result = (varValue[1] - varValue[0]);
+                        break;
+                }
+                // Can't forget to pop the operator currently on the stack
+                rpnStack.Pop();
+                // Converts result and pushes back onto stack for next calculation
+                Node resultNode = new Node(new Token(System.Convert.ToString(result), 9, true));
+                calcStack.Push(resultNode);
             }
-            //Console.Out.Write("{0} = {1}\n", varInput[1], varInput[0]);
-            //return v1;
         }
 
     }

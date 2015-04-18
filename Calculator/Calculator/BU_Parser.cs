@@ -11,10 +11,12 @@ namespace Calculator
     {
         //private static string result;
         private static List<string> parser_results = new List<string>();
+        public static string userPathLoc = Environment.CurrentDirectory;
+        public static string debugOutputPath = userPathLoc + @"\Output\debug\";
 
         public void printOutput(string path)
         {
-            string result = @".\Output\debug\" + path + "Parse.out";
+            string result = debugOutputPath + path + "_Parsing.out";
             Console.Out.Write("Parse Results Printed to: {0}\n", result);
             File.WriteAllLines(result, parser_results);
         }
@@ -29,8 +31,10 @@ namespace Calculator
             parser_results.AddRange(add_strL);
         }
 
-        public AbstractSyntaxTree ParseStream(GoldParserTables GPTables, TokenStream TStream)
+        public AbstractSyntaxTree ParseStream(/*GoldParserTables GPTables, */TokenStream TStream)
         {
+            GoldParserTables GPTables = new GoldParserTables();
+            
             //List<string> parser_results = new List<string>();
             Node HeadN = new Node();
             AbstractSyntaxTree AST = new AbstractSyntaxTree(HeadN);
@@ -39,7 +43,7 @@ namespace Calculator
             List<SymbolTableMember> symTable = GPTables.getSymbolTable();
             List<CharSetTableMember> charTable = GPTables.getCharSetTable();
             string ast = new String('*', 50);
-            string tokenErrorMsg = "^\n**Parsing Failed on Token of type {0}: {1}, at Col: {2}";
+            string tokenErrorMsg = "^\n**Parsing Failed on Token of type [{0}]: {1}, at Col: {2}";
 
             LALRState Lstate = lalrTable[0];
             Stack<int> State_Stack = new Stack<int>();
@@ -75,7 +79,7 @@ namespace Calculator
                     }
                     else
                     {
-                        string symbolname = symTable[Current.getTokenSymbol()].getSymbolTableName();
+                        string symbolname = Current.getTokenType();// symTable[Current.getTokenSymbol()].getSymbolTableName();
                         StringBuilder expected = new StringBuilder();
                         foreach (LALRAction la in Lstate.getLALR_ActionList())
                         {
@@ -118,8 +122,8 @@ namespace Calculator
                     // Stores Operator for use as root of new tree
                     Node operatorNode = new Node();
 
-                    parser_results.Add(string.Format("Reduce at State: {0}, {1} replaces: {2} terminals:", current_state, 
-                        symTable[NTind].getSymbolTableName(), prodTable[ProdInd].getProd_symIndices().Count));
+                    parser_results.Add(string.Format("Reduce at State: {0}, [{1}] replaces: {2} terminals:", current_state, 
+                        nonTerminalToken.getTokenType(), prodTable[ProdInd].getProd_symIndices().Count));
 
                     // Here is where we do the reduction itself
                     foreach (int sym in prodTable[ProdInd].getProd_symIndices())

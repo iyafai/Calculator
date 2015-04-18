@@ -4,23 +4,30 @@ using System.Linq;
 using System.Text;
 using Calculator.XML;
 using System.IO;
+using System.Xml;
+using System.Reflection;
+using Calculator.Properties;
 
 namespace Calculator
 {
     class CalcMain
     {
+        public static string userPathLoc = Environment.CurrentDirectory;
+        public static string outputPath = userPathLoc + @"\Output\";
         public static void Main(string[] args)
         {
             string ast = "************************************";
-            XMLParser xmp = new XMLParser();
+            string exePath = AppDomain.CurrentDomain.BaseDirectory;
+            string xmlpath = exePath+@"..\..\GrammarFinal-T5.xml";
+            XMLParser xmp = new XMLParser(xmlpath);
             xmp.parseAll();
             GoldParserTables GPtables = xmp.getGPBTables();     //Symbol, Rule, Parse, DFA and CharSet Tables
-            
+            string p1 = Environment.CurrentDirectory;
 
             //string result = "Calculator.out";
             //pulls each line from the file and adds to its own string in the List
-            System.IO.Directory.CreateDirectory(@".\Output");
-            System.IO.Directory.CreateDirectory(@".\Output\debug");
+            System.IO.Directory.CreateDirectory(outputPath);
+            System.IO.Directory.CreateDirectory(p1+@"\Output\debug");
 
             foreach (string test in args)
             {
@@ -30,7 +37,7 @@ namespace Calculator
                 LexicalAnalyzer LA = new LexicalAnalyzer();
                 List<string> calculatorOutput = new List<string>();
                 string fname = Path.GetFileNameWithoutExtension(test);
-                string result = @".\Output\"+fname+".out";
+                string result = outputPath+fname + ".out";
                 int maxFormat = 0;
 
                 try
@@ -58,10 +65,10 @@ namespace Calculator
                 int linecount = 0;
                 foreach (string eq in doc_lines)
                 {
-                    TokenStream TStream = LA.getTokenStream(GPtables, eq);
+                    TokenStream TStream = LA.getTokenStream(eq);
                     try
                     {
-                        BP.ParseStream(GPtables, TStream).Calculate(varTable);
+                        BP.ParseStream(TStream).Calculate(varTable);
                         string tvalue = varTable.ElementAt(linecount).Value;
                         calculatorOutput.Add(string.Format("{0,-" + maxFormat + "} => {1}", eq, tvalue));
                     }
@@ -70,6 +77,10 @@ namespace Calculator
                         calculatorOutput.Add(string.Format("{0,-" + maxFormat + "} => {1}", eq, "invalid"));
                         calculatorOutput.Add(e.Message);
                         linecount--;
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.Out.Write(ex.Message);
                     }
                     linecount++;
                 }
@@ -84,7 +95,7 @@ namespace Calculator
                     calculatorOutput.Add(string.Format("{0,-5}: {1}", temp.Key, temp.Value));
                 }
                 File.AppendAllLines(result, calculatorOutput);
-                Console.Out.Write("Results Printed to: {0}\n", result);
+                Console.Out.Write("Finished Calculating. Output Saved to: {0}\n\n", result);
                 //System.Diagnostics.Process.Start(result);
             }
 

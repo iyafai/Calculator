@@ -9,21 +9,22 @@ namespace Calculator.XML
 {
     class GoldParserTables
     {
-        private List<SymbolTableMember> SymbolTable;
-        private List<RuleTableMember> RuleTable;
-        private List<CharSetTableMember> CharSetTable;
-        private List<DFAState> DFATable;
-        private int initialDFAState;
-        private List<LALRState> LALRTable;
-
+        // Only need the one instance
+        private static List<SymbolTableMember> SymbolTable = new List<SymbolTableMember>();
+        private static List<RuleTableMember> RuleTable = new List<RuleTableMember>();
+        private static List<CharSetTableMember> CharSetTable = new List<CharSetTableMember>();
+        private static List<DFAState> DFATable = new List<DFAState>();
+        private int initialDFAState = 0;
+        private static List<LALRState> LALRTable = new List<LALRState>();
+        
         public GoldParserTables()
-        {
+        {/*
             SymbolTable = new List<SymbolTableMember>();
             RuleTable = new List<RuleTableMember>();
             CharSetTable = new List<CharSetTableMember>();
             DFATable = new List<DFAState>();
             initialDFAState = 0;
-            LALRTable = new List<LALRState>();
+            LALRTable = new List<LALRState>();*/
         }
 
         //SymbolTable Accessors

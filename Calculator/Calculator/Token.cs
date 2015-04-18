@@ -2,15 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Calculator.XML;
 
 namespace Calculator
 {
-    class Token
+    class Token 
     {
+        // token_name is the string read in, not what type it is
         private string token_name;
         private int symbol;
         private bool valid;
-        private int col_loc;
+        // colLoc represents what column in the file the token is read in at
+        private int colLoc;
 
         public Token()
         {
@@ -31,7 +34,7 @@ namespace Calculator
             token_name = name;
             symbol = sym;
             valid = val;
-            col_loc = cc;
+            colLoc = cc;
         }
 
         public void     setTokenName(string name)   {   token_name = name;  }
@@ -42,7 +45,12 @@ namespace Calculator
         public bool     isTokenValid()              {   return valid;       }
         public string   getTokenName()              {   return token_name;  }
         public int      getTokenSymbol()            {   return symbol;      }
-        public int      getTokenLoc()               {   return col_loc; }
+        public int      getTokenLoc()               {   return colLoc; }
+        public string getTokenType()
+        {
+            GoldParserTables gpt = new GoldParserTables();
+            return gpt.getSymbolTable()[symbol].getSymbolTableName();
+        }
 
         public bool isOperator()
         {
@@ -65,6 +73,7 @@ namespace Calculator
         }
     }
 
+    // List of Tokens, based from the Lexical Analyzer into the parser
     class TokenStream
     {
         private List<Token> TStream;

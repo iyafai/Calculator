@@ -17,7 +17,7 @@ namespace Calculator
 
         public void printOutput(string path)
         {
-            string result = @".\Output\debug\" + path + "LexAn.out";
+            string result = @".\Output\debug\" + path + "_LexicalAnalysis.out";
             if (File.Exists(result))
             {
                 File.Delete(result);
@@ -32,9 +32,11 @@ namespace Calculator
             File.AppendAllLines(result, E_Header);
             File.AppendAllLines(result, FailPrint);
         }
-        public TokenStream getTokenStream(GoldParserTables GPtables, string input)
+
+        public TokenStream getTokenStream(string input)
         {
             lineCount++;
+            GoldParserTables GPtables = new GoldParserTables();
             int init_state = GPtables.getInitialDFAState();         //convenience for going back to beginning of DFA
 			int state_tran = init_state;                            //keeps track of where we're going (initial value doesn't matter)
 			DFAState state = GPtables.getDFATable()[init_state];    //state to begin with
@@ -133,9 +135,6 @@ namespace Calculator
 				}
                 col_count++;
 			}
-
-            //print everything out all nice and neat
-
             return TStream;
 		}
     }
