@@ -9,26 +9,39 @@ namespace Calculator
 {
     class LexicalAnalyzer
     {
-        private string result;
-        public void createOutput(string path)
+        private static int lineCount = 0;
+        private static List<string> AcceptPrint = new List<string>();      //to keep track of Accepted Tokens for printing at the end
+        private static List<string> FailPrint = new List<string>();        //to keep track of Failed   Tokens for printing at the end
+        private static int tokenCount = 1;
+        private static int failedTokenCount = 1;
+
+        public void printOutput(string path)
         {
-            result = @".\Output\extra\" + path + "LexAn.out";
+            string result = @".\Output\debug\" + path + "LexAn.out";
             if (File.Exists(result))
             {
                 File.Delete(result);
             }
             Console.Out.Write("Lexical Analyzer Results Printed to: {0}\n", result);
+            string[] tempH = { "Token List:", "", string.Format("|{0,12} | {1,12} | {2,27} | {3,8}|", "#", "Type", "Value", "Location")};
+            List<string> Header = new List<string>(tempH);
+            Header.Add(new String('-', tempH[2].Length));
+            string[] E_Header = { "", "Errors:", "" };
+            File.WriteAllLines(result, Header);
+            File.AppendAllLines(result, AcceptPrint);
+            File.AppendAllLines(result, E_Header);
+            File.AppendAllLines(result, FailPrint);
         }
         public TokenStream getTokenStream(GoldParserTables GPtables, string input)
         {
+            lineCount++;
             int init_state = GPtables.getInitialDFAState();         //convenience for going back to beginning of DFA
 			int state_tran = init_state;                            //keeps track of where we're going (initial value doesn't matter)
 			DFAState state = GPtables.getDFATable()[init_state];    //state to begin with
-            int count = 1, fail_count = 1, line_count = 1, col_count = 1, col_at = 1;
-            List<string> AcceptPrint = new List<string>();      //to keep track of Accepted Tokens for printing at the end
-            List<string> FailPrint = new List<string>();        //to keep track of Failed   Tokens for printing at the end
-            string A_form = "[{0,5}] {1,10} {2,10} {3,-8}";
-            string F_form = "[{0,5}] {1,-5} {2,-3} {3,-3} Unrecognized character: {4,5}";
+            int col_count = 1, col_at = 1;
+            
+            string A_form = "|[{0,10}] | {1,12} | {2,27} | {3,-8}|";
+            string F_form = "[{0,10}] {1,-5} {2,-3} {3,-3} Unrecognized character: {4,5}";
 
             TokenStream TStream = new TokenStream();
 			string token = "";                                      //keeps track of the token we grab from the file
@@ -46,10 +59,11 @@ namespace Calculator
 				}
 				if (!check)                             //if it isn't it's skipped and added to the printout as an error
 				{
-                    FailPrint.Add(string.Format(F_form, fail_count, "At", line_count + ",", (col_count - 1) + ":", input[i]));
-                    AcceptPrint.Add(string.Format(A_form, count, "Error", "Unrecognized character: " + input[i], "at " + line_count + "," + col_count));
-                    count++;
-                    fail_count++;
+                    FailPrint.Add(string.Format(F_form, failedTokenCount, "At", lineCount + ",", (col_count - 1) + ":", input[i]));
+                    AcceptPrint.Add(string.Format(A_form, tokenCount, "Error", 
+                        "Unrecognized character: " + input[i], "at " + lineCount + "," + col_count));
+                    tokenCount++;
+                    failedTokenCount++;
                     TStream.AddToken(new Token(input[i].ToString(),-1,false,col_count));
                     col_count++;
 					continue;   //skips following code and moves on to next element in loop
@@ -77,10 +91,11 @@ namespace Calculator
 					{
                         col_at = (col_count - token.Length + 1);
                         string temp = "[{0,5}] {1,-5} {2,-3} {3,-3} Unrecognized character: {4,5}";
-                        FailPrint.Add(string.Format(temp, fail_count, "At", line_count + ",", col_at + ":", input[i]));
-                        AcceptPrint.Add(string.Format(A_form, count, "Error", "Unrecognized character: " + input[i], "at " + line_count + "," + col_at));
-                        count++;
-                        fail_count++;
+                        FailPrint.Add(string.Format(temp, failedTokenCount, "At", lineCount + ",", col_at + ":", input[i]));
+                        AcceptPrint.Add(string.Format(A_form, tokenCount, "Error", 
+                            "Unrecognized character: " + input[i], "at " + lineCount + "," + col_at));
+                        tokenCount++;
+                        failedTokenCount++;
                         TStream.AddToken(new Token(token, -1, false, col_at));
 						state = GPtables.getDFATable()[init_state];
 					}
@@ -92,8 +107,9 @@ namespace Calculator
 						{
                             col_at = (col_count - token.Length + 1);
                             string token_name = GPtables.getSymbolTable()[symbol].getSymbolTableName();
-                            AcceptPrint.Add(string.Format(A_form, count, token_name, token, "at " + line_count + "," + col_at));
+                            AcceptPrint.Add(string.Format(A_form, tokenCount, token_name, token, "at " + lineCount + "," + col_at));
                             TStream.AddToken(new Token(token, symbol, true, col_at));
+                            tokenCount++;
 						}
 						state_tran = init_state;  //change new state back to initial
 					}
@@ -110,20 +126,16 @@ namespace Calculator
 					{
                         col_at = (col_count - token.Length + 1);
                         string token_name = GPtables.getSymbolTable()[symbol].getSymbolTableName();
-                        AcceptPrint.Add(string.Format(A_form, count, token_name, token, "at " + line_count + "," + col_at));
+                        AcceptPrint.Add(string.Format(A_form, tokenCount, token_name, token, "at " + lineCount + "," + col_at));
                         TStream.AddToken(new Token(token,symbol,true,col_at));
+                        tokenCount++;
 					}
 				}
                 col_count++;
 			}
-            string[] Header = { "Token List:", "", string.Format("{0,7} {1,10} {2,10} {3,8}", "#", "Type", "Value", "Location") };
-            string[] E_Header = { "", "Errors:", "" };
 
             //print everything out all nice and neat
-            File.WriteAllLines(result, Header);
-            File.AppendAllLines(result, AcceptPrint);
-            File.AppendAllLines(result, E_Header);
-            File.AppendAllLines(result, FailPrint);
+
             return TStream;
 		}
     }

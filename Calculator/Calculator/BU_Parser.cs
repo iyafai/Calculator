@@ -9,19 +9,29 @@ namespace Calculator
 {
     class BU_Parser
     {
-        private string result;
-        public void createOutput(string path)
+        //private static string result;
+        private static List<string> parser_results = new List<string>();
+
+        public void printOutput(string path)
         {
-            result = @".\Output\extra\" + path + "Parse.out";
-            if (File.Exists(result))
-            {
-                File.Delete(result);
-            }
+            string result = @".\Output\debug\" + path + "Parse.out";
             Console.Out.Write("Parse Results Printed to: {0}\n", result);
+            File.WriteAllLines(result, parser_results);
         }
+
+        public void addStrToPrint(string add_str)
+        {
+            parser_results.Add(add_str);
+        }
+
+        public void addStrToPrint(List<string> add_strL)
+        {
+            parser_results.AddRange(add_strL);
+        }
+
         public AbstractSyntaxTree ParseStream(GoldParserTables GPTables, TokenStream TStream)
         {
-            List<string> parser_results = new List<string>();
+            //List<string> parser_results = new List<string>();
             Node HeadN = new Node();
             AbstractSyntaxTree AST = new AbstractSyntaxTree(HeadN);
             List<LALRState> lalrTable = GPTables.getLALRTable();
@@ -29,6 +39,7 @@ namespace Calculator
             List<SymbolTableMember> symTable = GPTables.getSymbolTable();
             List<CharSetTableMember> charTable = GPTables.getCharSetTable();
             string ast = new String('*', 50);
+            string tokenErrorMsg = "^\n**Parsing Failed on Token of type {0}: {1}, at Col: {2}";
 
             LALRState Lstate = lalrTable[0];
             Stack<int> State_Stack = new Stack<int>();
@@ -49,101 +60,142 @@ namespace Calculator
                 //Action corresponds to incoming input (horizontal on table
                 Lact = Lstate.getActMatchesIndex(Current.getTokenSymbol());
 
-                if (Lact.getAction() == 1)                      //Shift
+                if(Lact == null)                                //Failure
+                {
+                    // Parsing hits a dead end, we throw an error here for the user
+                    //Console.Out.WriteLine("Parse Failed");
+                    string spaces = new String(' ', Current.getTokenLoc() - 1);
+                    string E_message = "";
+                    parser_results.Add(string.Format("Failure at State:{0} Pushing {1}", current_state, Current.getTokenName()));
+                    parser_results.Add(ast);
+                    if (Current.getTokenSymbol() == -1)
+                    {
+                        throw new ParseErrorException(
+                            string.Format(spaces + tokenErrorMsg,"invalid", Current.getTokenName(), Current.getTokenLoc()));
+                    }
+                    else
+                    {
+                        string symbolname = symTable[Current.getTokenSymbol()].getSymbolTableName();
+                        StringBuilder expected = new StringBuilder();
+                        foreach (LALRAction la in Lstate.getLALR_ActionList())
+                        {
+                            expected.Append("["+symTable[la.getIndex()].getSymbolTableName()+"] ");
+                        }
+                        throw new ParseErrorException(
+                            string.Format(spaces + tokenErrorMsg + "\nExpected: {3}",
+                            symbolname, Current.getTokenName(), Current.getTokenLoc(), expected.ToString()));
+                    }
+                    throw new ParseErrorException(E_message);
+                    //Better error handling to come later
+                }
+                else if (Lact.getAction() == 1)                      //Shift
                 {
                     parser_results.Add(string.Format("Shift at State:{0} Pushing {1}", current_state,Current.getTokenName()));
                     Node TempN = new Node(Current);
-                    current_state = Lact.getValue();            //New state becomes the value of the action
-                    State_Stack.Push(Lact.getValue());          //push onto stack
-                    Input_Stack.Push(Current);                  //Input Token gets pushed on, wraps to beginning for next Token
+                    // Value from LALR table saved as next state.
+                    current_state = Lact.getValue();            
+                    State_Stack.Push(Lact.getValue());
+                    Input_Stack.Push(Current);
+                    // Everything gets pushed onto the semantic stack
+                    // but useless characters are filtered later
                     Semantic_Stack.Push(TempN);
+                    // Pull next Token from Input
                     Current = TStream.getNextToken(input_counter);
                     input_counter++;
                 }
 
                 else if (Lact.getAction() == 2)                 //Reduce
                 {
-                    
-                    //grabs production with index given from LALR Action
+                    // grabs production rule with index given by LALR Action
                     int ProdInd = Lact.getValue();
-                    //saves the Non-Terminal Index for creating a new token for pushing on the stack
+
+                    // Creates a new token from the Non-Terminal Symbol
                     int NTind = prodTable[ProdInd].getProd_NT_index();
-                    //create New Token from the Non-Terminal Symbol
-                    Token tempT = new Token(symTable[NTind].getSymbolTableName(), NTind, true);
-                    Node tempF = new Node(tempT);
-                    LinkedList<Node> tempN = new LinkedList<Node>();
-                    Node OPN = new Node();
+                    Token nonTerminalToken = new Token(symTable[NTind].getSymbolTableName(), NTind, true);
+                    Node nonTerminalNode = new Node(nonTerminalToken);
+                    // Stores Children (if any) for new tree
+                    LinkedList<Node> productionTerminals = new LinkedList<Node>();
+                    // Stores Operator for use as root of new tree
+                    Node operatorNode = new Node();
 
                     parser_results.Add(string.Format("Reduce at State: {0}, {1} replaces: {2} terminals:", current_state, 
                         symTable[NTind].getSymbolTableName(), prodTable[ProdInd].getProd_symIndices().Count));
+
+                    // Here is where we do the reduction itself
                     foreach (int sym in prodTable[ProdInd].getProd_symIndices())
                     {
                         parser_results.Add(string.Format("\t\t{0} ", symTable[sym].getSymbolTableName()));
+                        // For our current tables, if our terminals only number 1
+                        // then it's unneccessary to add to the semantic stack as it's just
+                        // replacing a terminal with a non-terminal which we don't want in the tree
                         if (prodTable[ProdInd].getProd_SymCount() > 1)
                         {
+                            // Our stack can have multiple operators waiting (from other subtrees)
+                            // We don't want these subtrees to become the new root hence this check
                             if (Semantic_Stack.Peek().isOperator() && !Semantic_Stack.Peek().hasChildren())
                             {
-                                OPN = Semantic_Stack.Pop();
+                                operatorNode = Semantic_Stack.Pop();
                             }
                             else
                             {
-                                tempN.AddLast(Semantic_Stack.Pop());
+                                productionTerminals.AddLast(Semantic_Stack.Pop());
                             }
                         }
                         Input_Stack.Pop();
                         State_Stack.Pop();
                     }
 
-                    //parser_results.Add("\n");
-                    Input_Stack.Push(tempT);
-                    //Check for negating numbers, replaces on tree with -1 * number, makes calculating easier
+                    // We need the nonTerminal for the Parsing to work
+                    Input_Stack.Push(nonTerminalToken);
+
+                    // The following If-Else creates a new tree based on the reduction.
+                    // Checking first for the special case of negative numbers.
+                    // When a negative is encountered it places it on the tree as -1 * number.
                     if (prodTable[ProdInd].getProd_SymCount() == 2 && prodTable[ProdInd].getProd_symIndices().Contains(18))
                     {
-                        //Create some new tokens for negation subtree
-                        OPN = new Node(new Token("*", 14, true));
-                        //tempN will already contain the number being negated, so just add the -1 as the 2nd child
-                        tempN.AddLast(new Node(new Token("-1", 9, true)));
-                        Semantic_Stack.Push(AST.makeTree(OPN, tempN));
+                        operatorNode = new Node(new Token("*", 14, true));
+                        productionTerminals.AddLast(new Node(new Token("-1", 9, true)));
+                        Semantic_Stack.Push(AST.makeTree(operatorNode, productionTerminals));
                     }
                     
-                    //When SymCount==1 it's just a NonTerminal subbing for a Terminal so we ignore those cases
+                    // We ignore SymCount==1 as it's just a NonTerminal subbing for a Terminal.
                     else if (prodTable[ProdInd].getProd_SymCount() > 1)
                     {
-                        LinkedList<Node>tempQ = new LinkedList<Node>();
-                        int lim = tempN.Count;
-                        int[] rem = new int[lim];
-                        //Trim Useless Characters namely: ( ) , and ;
-                        foreach (Node n in tempN)
+                        // First We trim the unnecessary characters: ( ) , ;
+                        // As they have no bearing on the actual calculation once parsing is done.
+                        LinkedList<Node>newChldrn = new LinkedList<Node>();
+                        foreach (Node n in productionTerminals)
                         {
                             if (!n.isUnNeeded())
                             {
-                                tempQ.AddFirst(n);
+                                newChldrn.AddFirst(n);
                             }
                         }
-                        //This is used for cases where an expression is represented as (expression)
-                        //We don't need it to be 
-                        if (tempQ.Count > 1)
+
+                        // This is used to distinguish an expression that is represented as (expression).
+                        if (newChldrn.Count > 1)
                         {
-                            if (OPN == null)
+                            // Might be unneeded, check later
+                            if (operatorNode == null)
                             {
-                                Semantic_Stack.Push(AST.makeTree(tempF, tempQ));
+                                Semantic_Stack.Push(AST.makeTree(nonTerminalNode, newChldrn));
                             }
                             else
                             {
-                                Semantic_Stack.Push(AST.makeTree(OPN, tempQ));
+                                Semantic_Stack.Push(AST.makeTree(operatorNode, newChldrn));
                             }
                         }
+                        // In the case of ( expression ) we just return our expression to the stack w/o parens.
                         else
                         {
-                            Semantic_Stack.Push(tempQ.ElementAt(0));
+                            Semantic_Stack.Push(newChldrn.ElementAt(0));
                         }
                     }
 
-                    //The new state is what's left on the State Stack
+                    // Reductions are followed by a go-to statement
                     Lstate = lalrTable[State_Stack.Peek()];
-
-                    //After the Reduce we have a goto from the Non-Terminal Token
-                    //Our current state becomes the Action Value from the LALR Action that matches the index
+                    // After the Reduce we have a goto from the Non-Terminal Token
+                    // Our new state becomes the Action Value from the LALR Action that matches the index
                     current_state = Lstate.getActMatchesIndex(NTind).getValue();
                     State_Stack.Push(current_state);
                 }
@@ -156,17 +208,12 @@ namespace Calculator
 
                 else if (Lact.getAction() == 4)     //Accept
                 {
+                    // Parsing is successful, returns the Abstract Syntax Tree
                     parser_results.Add(string.Format("Accept State at State={0}",current_state));
                     parser_results.Add(ast);
-                    File.AppendAllLines(result,parser_results);
+ 
                     //AST.Print();
                     return AST;
-                }
-
-                else                                //Failure
-                {
-                    Console.Out.WriteLine("Parse Failed");
-                    //Better error handling to come later
                 }
             }
 

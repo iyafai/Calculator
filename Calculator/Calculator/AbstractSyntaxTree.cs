@@ -76,6 +76,10 @@ namespace Calculator
                             try
                             {
                                 varValue[i] = Double.Parse(st);
+                                if (Double.IsInfinity(varValue[i]) || Double.IsNaN(varValue[i]))
+                                {
+                                    varValue[i] = 0;
+                                }
                             }
                             catch (ArgumentNullException)
                             {
@@ -103,7 +107,14 @@ namespace Calculator
                 }
                 else if (CStack.Peek().getToken().getTokenSymbol() == 5)        //divisor
                 {
-                    result = (int)(Math.Abs(varValue[1]) / Math.Floor(Math.Abs(varValue[0])));
+                    if (Math.Floor(Math.Abs(varValue[0])) == 0)
+                    {
+                        result = Double.PositiveInfinity;
+                    }
+                    else
+                    {
+                        result = (int)(Math.Abs(varValue[1]) / Math.Floor(Math.Abs(varValue[0])));
+                    }
                 }
                 else if (CStack.Peek().getToken().getTokenSymbol() == 6)        //divide
                 {

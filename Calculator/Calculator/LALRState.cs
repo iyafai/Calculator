@@ -35,10 +35,10 @@ namespace Calculator
             {
                 return this.getLALR_ActionList()[count];
             }
-            catch (ArgumentOutOfRangeException e)
+            catch (ArgumentOutOfRangeException)
             {
-                Console.Out.Write("{0} on Checking LALR Table LALR_index:{1}, Action_Count: {2} ", this.getLALR_index(),
-                    this.getLALR_actionCount(), e.Message);
+                //Console.Out.Write("{0} on Checking LALR Table LALR_index:{1}, Action_Count: {2} ", this.getLALR_index(),
+                //    this.getLALR_actionCount(), e.Message);
                 return null;
             }
             //return this.getLALR_ActionList()[count];
