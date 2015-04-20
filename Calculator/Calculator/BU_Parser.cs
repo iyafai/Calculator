@@ -19,6 +19,7 @@ namespace Calculator
             string result = debugOutputPath + path + "_Parsing.out";
             Console.Out.Write("Parse Results Printed to: {0}\n", result);
             File.WriteAllLines(result, parser_results);
+            parser_results.Clear();
         }
 
         public void addStrToPrint(string add_str)

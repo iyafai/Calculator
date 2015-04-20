@@ -31,6 +31,9 @@ namespace Calculator
             File.AppendAllLines(result, AcceptPrint);
             File.AppendAllLines(result, E_Header);
             File.AppendAllLines(result, FailPrint);
+            lineCount = 0; tokenCount = 1; failedTokenCount = 1;
+            AcceptPrint.Clear();
+            FailPrint.Clear();
         }
 
         public TokenStream getTokenStream(string input)
