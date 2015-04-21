@@ -77,6 +77,12 @@ namespace Calculator
                         calculatorOutput.Add(e.Message);
                         linecount--;
                     }
+                    catch (CalculationErrorException c)
+                    {
+                        calculatorOutput.Add(string.Format("{0,-" + maxFormat + "} => {1}", eq, "invalid"));
+                        calculatorOutput.Add(c.Message);
+                        linecount--;
+                    }
                     catch (Exception ex)
                     {
                         Console.Out.Write(ex.Message);

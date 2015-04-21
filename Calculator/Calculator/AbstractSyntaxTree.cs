@@ -8,6 +8,9 @@ namespace Calculator
     class AbstractSyntaxTree
     {
         private Node Head;
+        private string divZeroErrorMsg = "{0} / {1} Division by Zero Error, Value undefined.";
+        private string modZeroErrorMsg = "{0} % {1} is undefined. Calculation Error.";
+        private string undefinedResultErrorMsg = "Calculation Error. Value of {0} is undefined. ";
 
         public AbstractSyntaxTree(Node H)
         {
@@ -121,10 +124,9 @@ namespace Calculator
                         break;
                     case 5:    
                         // Integer Division.
-                        if (Math.Floor(Math.Abs(varValue[0])) == 0)
+                        if (Math.Abs(Math.Floor(varValue[0])) == 0)
                         {
-                            // Otherwise it gives some wonky answer
-                            result = Double.PositiveInfinity;
+                            throw new CalculationErrorException(String.Format(divZeroErrorMsg, varValue[1], varValue[0]));
                         }
                         else
                         {
@@ -133,16 +135,35 @@ namespace Calculator
                         break;
                     case 6:
                         // Division
+                        if (varValue[0] == 0)
+                        {
+                            throw new CalculationErrorException(String.Format(divZeroErrorMsg,varValue[1],varValue[0]));
+                        }
                         result = (varValue[1] / varValue[0]);
                         break;
                     case 7:
                         // Equals
-                        string val = System.Convert.ToString(varValue[0]);
-                        varList.Add(varInput[1], val);
+                        if (Double.IsInfinity(varValue[0]) || Double.IsNaN(varValue[0]))
+                        {
+                            varValue[0] = 0;
+                            string val = System.Convert.ToString(varValue[0]);
+                            varList.Add(varInput[1], val);
+                            throw new CalculationErrorException(String.Format(undefinedResultErrorMsg, varInput[1]));
+                        }
+                        else
+                        {
+                            string val = System.Convert.ToString(varValue[0]);
+                            varList.Add(varInput[1], val);
+                        }
+                        
                         break;
                     case 13:
                         // Modulo
-                        result = (Math.Abs(varValue[1]) % Math.Floor(Math.Abs(varValue[0])));
+                        if (varValue[1] == 0)
+                        {
+                            throw new CalculationErrorException(String.Format(modZeroErrorMsg, varValue[1], varValue[0]));
+                        }
+                        result = Math.Abs((varValue[1]) % Math.Floor(varValue[0]));
                         break;
                     case 14:
                         // Multiplication
