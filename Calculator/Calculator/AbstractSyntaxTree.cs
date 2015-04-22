@@ -8,9 +8,10 @@ namespace Calculator
     class AbstractSyntaxTree
     {
         private Node Head;
-        private string divZeroErrorMsg = "{0} / {1} Division by Zero Error, Value undefined.";
-        private string modZeroErrorMsg = "{0} % {1} is undefined. Calculation Error.";
-        private string undefinedResultErrorMsg = "Calculation Error. Value of {0} is undefined. ";
+        private string divZeroErrorMsg = "**Calculation Error: Division by Zero. ({0}/{1}) is undefined.";
+        private string intdivZeroErrorMsg = "**Calculation Error: Division by Zero. Div({0},{1}) is undefined.";
+        private string modZeroErrorMsg = "**Calculation Error: Modulo by Zero. Mod({0},{1}) is undefined.";
+        private string undefinedResultErrorMsg = "**Calculation Error. Value of {0} is undefined. ";
 
         public AbstractSyntaxTree(Node H)
         {
@@ -126,7 +127,7 @@ namespace Calculator
                         // Integer Division.
                         if (Math.Abs(Math.Floor(varValue[0])) == 0)
                         {
-                            throw new CalculationErrorException(String.Format(divZeroErrorMsg, varValue[1], varValue[0]));
+                            throw new CalculationErrorException(String.Format(intdivZeroErrorMsg, varInput[1], varInput[0]));
                         }
                         else
                         {
@@ -146,20 +147,24 @@ namespace Calculator
                         if (Double.IsInfinity(varValue[0]) || Double.IsNaN(varValue[0]))
                         {
                             varValue[0] = 0;
-                            string val = System.Convert.ToString(varValue[0]);
-                            varList.Add(varInput[1], val);
-                            throw new CalculationErrorException(String.Format(undefinedResultErrorMsg, varInput[1]));
                         }
-                        else
-                        {
-                            string val = System.Convert.ToString(varValue[0]);
-                            varList.Add(varInput[1], val);
-                        }
+
+                         string val = System.Convert.ToString(varValue[0]);
+                         try
+                         {
+                             varList.Add(varInput[1], val);
+                         }
+                         catch (ArgumentException e)
+                         {
+                             varList.Remove(varInput[1]);
+                             varList.Add(varInput[1], val);
+                             throw new CalculationErrorException("**Value already defined, future calculations will use new value");
+                         }
                         
                         break;
                     case 13:
                         // Modulo
-                        if (varValue[1] == 0)
+                        if (Math.Floor(varValue[1]) == 0 || Double.IsNaN(Math.Floor(varValue[1])))
                         {
                             throw new CalculationErrorException(String.Format(modZeroErrorMsg, varValue[1], varValue[0]));
                         }
