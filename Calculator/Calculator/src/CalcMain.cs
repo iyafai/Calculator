@@ -28,6 +28,7 @@ namespace Calculator
             System.IO.Directory.CreateDirectory(outputPath);
             System.IO.Directory.CreateDirectory(p1+@"\Output\debug");
 
+            // In the case of file inputs specified
             if (args.Any())
             {
                 foreach (string test in args)
@@ -39,9 +40,10 @@ namespace Calculator
                     List<string> calculatorOutput = new List<string>();
                     string fname = Path.GetFileNameWithoutExtension(test);
                     string result = outputPath + fname + ".out";
-                    int maxFormat = 0;
                     string tvalue = "";
+                    int maxFormat = 0;
 
+                    // Reads lines out of file, prints error if file not found or inaccessible.
                     try
                     {
                         doc_lines.AddRange(File.ReadAllLines(test));
@@ -55,7 +57,9 @@ namespace Calculator
                         }
                     }
 
-                    File.WriteAllText(result, "Variables: \n");
+                    File.WriteAllText(result, "Results: \n");
+                    // Used for formating output
+                    // based on the length of the longest equation string up to a max of 80 chars
                     foreach (string eq in doc_lines)
                     {
                         if (eq.Length > maxFormat && eq.Length < 80)
@@ -64,46 +68,53 @@ namespace Calculator
                         }
                     }
 
-                    int linecount = 0;
                     foreach (string eq in doc_lines)
                     {
                         TokenStream TStream = LA.getTokenStream(eq);
                         string variableset = TStream.getToken(0).getTokenName();
                         try
                         {
+                            // Attempts to parse token stream, calculate and save variable.
                             BP.ParseStream(TStream).Calculate(varTable);
                             varTable.TryGetValue(variableset, out tvalue);
                             calculatorOutput.Add(string.Format("{0,-" + maxFormat + "} => {1}", eq, tvalue));
                         }
+                        // Caught when the parser encounters an error. no variable gets saved.
                         catch (ParseErrorException e)
                         {
                             calculatorOutput.Add(string.Format("{0,-" + maxFormat + "} => {1}", eq, "invalid"));
                             calculatorOutput.Add(e.Message + "\n");
-                            linecount--;
                         }
+                        // Caught when the calculator hits an error (div/0, etc)
                         catch (CalculationErrorException c)
                         {
                             try
                             {
-                                if (varTable.ContainsKey(variableset))
-                                {
-                                    varTable.TryGetValue(variableset, out tvalue);
-                                }
-                            }
-                            catch (ArgumentNullException)
-                            {
-                                varTable.Add(variableset, "0");
+                                varTable.Add(TStream.getToken(0).getTokenName(), "0");
                                 varTable.TryGetValue(variableset, out tvalue);
+                                calculatorOutput.Add(string.Format("{0,-" + maxFormat + "} => {1}", eq, tvalue));
                             }
-                            calculatorOutput.Add(string.Format("{0,-" + maxFormat + "} => {1}", eq, tvalue));
+                            // For edge case of calculation error & overwrite attempt
+                            catch (ArgumentException)
+                            {
+                                varTable.TryGetValue(variableset, out tvalue);
+                                calculatorOutput.Add(string.Format("{0,-" + maxFormat + "} => {1}", eq, tvalue));
+                                calculatorOutput.Add("**Warning: Variable already defined. Future calculations will use new value");
+                            }
                             calculatorOutput.Add(c.Message + "\n");
-                            linecount--;
                         }
+                        // Caught when calculator tries overwriting a previously saved variable
+                        catch (ArgumentException ae)
+                        {
+                            varTable.TryGetValue(variableset, out tvalue);
+                            calculatorOutput.Add(string.Format("{0,-" + maxFormat + "} => {1}", eq, tvalue));
+                            calculatorOutput.Add(ae.Message + "\n");
+                        }
+                        // Just in case for debugging purposes
                         catch (Exception ex)
                         {
                             Console.Out.Write(ex.Message);
                         }
-                        linecount++;
                     }
 
                     LA.printOutput(fname);
@@ -120,9 +131,12 @@ namespace Calculator
                     //System.Diagnostics.Process.Start(result);
                 }
             }
+
+            // Allows for equation solving in the console, in the case of no inputs
             else
             {
-                Dictionary<string, string> varTable = new Dictionary<string, string>();     //Stores variable values
+                // Stores variable values
+                Dictionary<string, string> varTable = new Dictionary<string, string>();
                 BU_Parser BP = new BU_Parser();
                 LexicalAnalyzer LA = new LexicalAnalyzer();
                 List<string> calculatorOutput = new List<string>();
@@ -130,17 +144,18 @@ namespace Calculator
                 Console.Out.Write(" eg. x3 = 4*(x1-5);\n type 'quit' to end\n");
                 string eq = "";
                 string tvalue = "";
-                int linecount = 0;
 
                 while (true)
                 {
                     eq = Console.In.ReadLine();
+                    // Typing quit ends equation solver
                     if (eq.Equals("quit", StringComparison.OrdinalIgnoreCase))
                     {
                         break;
                     }
                     TokenStream TStream = LA.getTokenStream(eq);
                     string variableset = TStream.getToken(0).getTokenName();
+                    // The following code works the same as above, only it prints to the console instead of a file
                     try
                     {
                         BP.ParseStream(TStream).Calculate(varTable);
@@ -151,31 +166,33 @@ namespace Calculator
                     {
                         Console.Out.Write(String.Format("{0,10} => {1}\n", eq, "invalid"));
                         Console.Out.Write(e.Message + "\n");
-                        linecount--;
                     }
                     catch (CalculationErrorException c)
                     {
                         try
                         {
-                            if (varTable.ContainsKey(TStream.getToken(0).getTokenName()))
-                            {
-                                varTable.TryGetValue(variableset, out tvalue);
-                            }
-                        }
-                        catch (ArgumentNullException)
-                        {
                             varTable.Add(TStream.getToken(0).getTokenName(), "0");
                             varTable.TryGetValue(variableset, out tvalue);
+                            Console.Out.Write(String.Format("{0,10} = {1}\n", variableset, tvalue));
                         }
-                        Console.Out.Write(String.Format("{0,10} = {1}\n", variableset, tvalue));
+                        catch (ArgumentException)
+                        {
+                            varTable.TryGetValue(variableset, out tvalue);
+                            Console.Out.Write(String.Format("{0,10} = {1}\n", variableset, tvalue));
+                            Console.Out.Write("**Warning: Variable already defined. Future calculations will use new value\n");
+                        }
                         Console.Out.Write(c.Message + "\n");
-                        linecount--;
+                    }
+                    catch (ArgumentException ae)
+                    {
+                        varTable.TryGetValue(variableset, out tvalue);
+                        Console.Out.Write(String.Format("{0,10} = {1}\n", variableset, tvalue));
+                        Console.Out.Write(ae.Message + "\n");
                     }
                     catch (Exception ex)
                     {
-                        Console.Out.Write(ex.Message+"\n");
+                        Console.Out.Write(ex.Message + "\n");
                     }
-                    linecount++;
                 }
             }
 

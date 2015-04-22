@@ -59,21 +59,21 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BU_Parser.cs" />
-    <Compile Include="CalcMain.cs" />
-    <Compile Include="CalculationErrorException.cs" />
-    <Compile Include="Tables\CharSetTableMember.cs" />
-    <Compile Include="AbstractSyntaxTree.cs" />
-    <Compile Include="Tables\DFAEdge.cs" />
-    <Compile Include="Tables\DFAState.cs" />
-    <Compile Include="FileMaker.cs" />
-    <Compile Include="XML\GoldParserTables.cs" />
-    <Compile Include="Tables\LALRAction.cs" />
-    <Compile Include="LexicalAnalyzer.cs" />
-    <Compile Include="Node.cs" />
-    <Compile Include="ParseErrorException.cs" />
-    <Compile Include="Tables\RuleTableMember.cs" />
-    <Compile Include="Tables\LALRState.cs" />
+    <Compile Include="src\BU_Parser.cs" />
+    <Compile Include="src\CalcMain.cs" />
+    <Compile Include="src\CalculationErrorException.cs" />
+    <Compile Include="src\Tables\CharSetTableMember.cs" />
+    <Compile Include="src\AbstractSyntaxTree.cs" />
+    <Compile Include="src\Tables\DFAEdge.cs" />
+    <Compile Include="src\Tables\DFAState.cs" />
+    <Compile Include="src\FileMaker.cs" />
+    <Compile Include="src\XML\GoldParserTables.cs" />
+    <Compile Include="src\Tables\LALRAction.cs" />
+    <Compile Include="src\LexicalAnalyzer.cs" />
+    <Compile Include="src\Node.cs" />
+    <Compile Include="src\ParseErrorException.cs" />
+    <Compile Include="src\Tables\RuleTableMember.cs" />
+    <Compile Include="src\Tables\LALRState.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -84,9 +84,9 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="Tables\SymbolTableMember.cs" />
-    <Compile Include="Token.cs" />
-    <Compile Include="XML\XMLParser.cs" />
+    <Compile Include="src\Tables\SymbolTableMember.cs" />
+    <Compile Include="src\Token.cs" />
+    <Compile Include="src\XML\XMLParser.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
