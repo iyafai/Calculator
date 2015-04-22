@@ -8,10 +8,11 @@ namespace Calculator
     class AbstractSyntaxTree
     {
         private Node Head;
-        private string divZeroErrorMsg = "**Calculation Error: Division by Zero. ({0}/{1}) is undefined.";
-        private string intdivZeroErrorMsg = "**Calculation Error: Division by Zero. Div({0},{1}) is undefined.";
-        private string modZeroErrorMsg = "**Calculation Error: Modulo by Zero. Mod({0},{1}) is undefined.";
-        private string undefinedResultErrorMsg = "**Calculation Error. Value of {0} is undefined. ";
+        private string divZeroErrorMsg = "**Error: Division by Zero. ({0}/{1}) is undefined. Result set to 0.";
+        private string intdivZeroErrorMsg = "**Error: Division by Zero. Div({0},{1}) is undefined. Result set to 0.";
+        private string modZeroErrorMsg = "**Error: Modulo by Zero. Mod({0},{1}) is undefined. Result set to 0.";
+        private string variableDefinedWarning = "**Warning: Variable already defined. Future calculations will use new value";
+        //private string undefinedResultErrorMsg = "**Calculation Error. Value of {0} is undefined. ";
 
         public AbstractSyntaxTree(Node H)
         {
@@ -158,7 +159,7 @@ namespace Calculator
                          {
                              varList.Remove(varInput[1]);
                              varList.Add(varInput[1], val);
-                             throw new CalculationErrorException("**Value already defined, future calculations will use new value");
+                             throw new CalculationErrorException(variableDefinedWarning);
                          }
                         
                         break;

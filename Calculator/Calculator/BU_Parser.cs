@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Calculator.XML;
 using System.IO;
+using Calculator.Tables;
 
 namespace Calculator
 {

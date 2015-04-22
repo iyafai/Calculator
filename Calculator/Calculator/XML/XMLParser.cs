@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml;
 using System.Xml.XPath;
-using Calculator.XML;
+using Calculator.Tables;
 
-namespace Calculator
+namespace Calculator.XML
 {
     class XMLParser
     {

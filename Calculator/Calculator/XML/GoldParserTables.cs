@@ -4,6 +4,7 @@ using System.Text;
 using System.IO;
 using System.Text.RegularExpressions;
 using Calculator;
+using Calculator.Tables;
 
 namespace Calculator.XML
 {

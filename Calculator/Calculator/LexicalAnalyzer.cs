@@ -4,6 +4,7 @@ using System.Text;
 using System.Collections.Generic;
 using System;
 using System.Linq;
+using Calculator.Tables;
 
 namespace Calculator
 {
