@@ -126,13 +126,13 @@ namespace Calculator
                         break;
                     case 5:    
                         // Integer Division.
-                        if (Math.Abs(Math.Floor(varValue[0])) == 0)
+                        if (Math.Floor(Math.Abs(varValue[0])) == 0)
                         {
                             throw new CalculationErrorException(String.Format(intdivZeroErrorMsg, varInput[1], varInput[0]));
                         }
                         else
                         {
-                            result = (int)(Math.Abs(varValue[1]) / Math.Floor(Math.Abs(varValue[0])));
+                            result = (int)(Math.Floor(Math.Abs(varValue[1])) / Math.Floor(Math.Abs(varValue[0])));
                         }
                         break;
                     case 6:
@@ -149,27 +149,27 @@ namespace Calculator
                         {
                             varValue[0] = 0;
                         }
-
-                         string val = System.Convert.ToString(varValue[0]);
-                         try
-                         {
-                             varList.Add(varInput[1], val);
-                         }
-                         catch (ArgumentException e)
-                         {
-                             varList.Remove(varInput[1]);
-                             varList.Add(varInput[1], val);
-                             throw new ArgumentException(variableDefinedWarning);
-                         }
-                        
+                        string val = System.Convert.ToString(varValue[0]);
+                        try
+                        {
+                            varList.Add(varInput[1], val);
+                        }
+                        catch (ArgumentException)
+                        {
+                            // This happens when it tries to overwrite an already saved variable
+                            // In which case we overwrite and throw an exception up to main to notify the user
+                            varList.Remove(varInput[1]);
+                            varList.Add(varInput[1], val);
+                            throw new ArgumentException(variableDefinedWarning);
+                        }
                         break;
                     case 13:
                         // Modulo
-                        if (Math.Floor(varValue[1]) == 0 || Double.IsNaN(Math.Floor(varValue[1])))
+                        if (Math.Floor(varValue[0]) == 0 || Double.IsNaN(Math.Floor(varValue[0])))
                         {
                             throw new CalculationErrorException(String.Format(modZeroErrorMsg, varValue[1], varValue[0]));
                         }
-                        result = Math.Abs((varValue[1]) % Math.Floor(varValue[0]));
+                        result = Math.Abs(Math.Floor((varValue[1])) % Math.Floor(varValue[0]));
                         break;
                     case 14:
                         // Multiplication

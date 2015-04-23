@@ -16,7 +16,7 @@ namespace Calculator.XML
         public XMLParser()
         {
             GPBTables = new GoldParserTables();
-            doc.LoadXml(Calculator.Properties.Resources.GrammarFinal_T5);
+            doc.LoadXml(Calculator.Properties.Resources.GrammarFinal);
         }
         public XMLParser(string path)
         {

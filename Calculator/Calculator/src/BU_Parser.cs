@@ -10,10 +10,10 @@ namespace Calculator
 {
     class BU_Parser
     {
-        //private static string result;
+        // Stuff for printing to the file
         private static List<string> parser_results = new List<string>();
-        public static string userPathLoc = Environment.CurrentDirectory;
-        public static string debugOutputPath = userPathLoc + @"\Output\debug\";
+        private static string userPathLoc = Environment.CurrentDirectory;
+        private static string debugOutputPath = userPathLoc + @"\Output\debug\";
 
         public void printOutput(string path)
         {
@@ -33,17 +33,17 @@ namespace Calculator
             parser_results.AddRange(add_strL);
         }
 
-        public AbstractSyntaxTree ParseStream(/*GoldParserTables GPTables, */TokenStream TStream)
+        public AbstractSyntaxTree ParseStream(TokenStream TStream)
         {
-            GoldParserTables GPTables = new GoldParserTables();
-            
-            //List<string> parser_results = new List<string>();
             Node HeadN = new Node();
             AbstractSyntaxTree AST = new AbstractSyntaxTree(HeadN);
+            
+            GoldParserTables GPTables = new GoldParserTables();
             List<LALRState> lalrTable = GPTables.getLALRTable();
             List<RuleTableMember> prodTable = GPTables.getRuleTable();
             List<SymbolTableMember> symTable = GPTables.getSymbolTable();
             List<CharSetTableMember> charTable = GPTables.getCharSetTable();
+            
             string ast = new String('*', 50);
             string tokenErrorMsg = "^\n**Parsing Failed on Token of type [{0}]: {1}, at Col: {2}";
 
