@@ -139,7 +139,7 @@ namespace Calculator
                         // Division
                         if (varValue[0] == 0)
                         {
-                            throw new CalculationErrorException(String.Format(divZeroErrorMsg,varValue[1],varValue[0]));
+                            throw new CalculationErrorException(String.Format(divZeroErrorMsg, varInput[1], varInput[0]));
                         }
                         result = (varValue[1] / varValue[0]);
                         break;
@@ -167,7 +167,7 @@ namespace Calculator
                         // Modulo
                         if (Math.Floor(varValue[0]) == 0 || Double.IsNaN(Math.Floor(varValue[0])))
                         {
-                            throw new CalculationErrorException(String.Format(modZeroErrorMsg, varValue[1], varValue[0]));
+                            throw new CalculationErrorException(String.Format(modZeroErrorMsg, varInput[1], varInput[0]));
                         }
                         result = Math.Abs(Math.Floor((varValue[1])) % Math.Floor(varValue[0]));
                         break;

@@ -56,6 +56,7 @@ namespace Calculator
             int atCol = 1;
             string A_form = "|#{0,10}  | {1,12} | {2,27} | {3,-8}|";
             string F_form = "[{0,10}] {1,-5} {2,-3} {3,-3} Unrecognized character: {4,5}";
+            string loc = "";
 
             TokenStream TStream = new TokenStream();
             // Keeps track of the token as read from the file (not the type)
@@ -81,9 +82,9 @@ namespace Calculator
                 // We just skip them here and be done with it.
                 if (!validCharacter)
                 {
-                    FailPrint.Add(string.Format(F_form, failedTokenCount, "At", lineCount + ",", atCol + ":", input[i]));
-                    AcceptPrint.Add(string.Format(A_form, tokenCount, "Error",
-                        "Unrecognized character: " + input[i], "at " + lineCount + "," + atCol));
+                    loc = "at " + lineCount + "," + atCol;
+                    FailPrint.Add(string.Format(A_form, failedTokenCount, "Error", "Unrecognized character: " + input[i], loc));
+                    AcceptPrint.Add(string.Format(A_form, tokenCount, "Error", "Unrecognized character: " + input[i], loc));
                     tokenCount++;
                     failedTokenCount++;
                     TStream.AddToken(new Token(input[i].ToString(), -1, false, atCol));
@@ -128,13 +129,14 @@ namespace Calculator
 
                 // If it's not an error state, we check to make sure it's not whitespace (symbol==2)
                 // And then move to add it to our token stream and printout
+                loc = "at " + lineCount + "," + atCol;
                 if (state.getAcceptSymbolIndex() !=-1)
                 {
                     symbol = state.getAcceptSymbolIndex();
                     if (symbol != 2)
                     {
                         string token_name = GPtables.getSymbolTable()[symbol].getSymbolTableName();
-                        AcceptPrint.Add(string.Format(A_form, tokenCount, token_name, token, "at " + lineCount + "," + atCol));
+                        AcceptPrint.Add(string.Format(A_form, tokenCount, token_name, token, loc));
                         TStream.AddToken(new Token(token, symbol, true, atCol));
                         tokenCount++;
                     }
@@ -142,9 +144,8 @@ namespace Calculator
 
                 else
                 {
-                    FailPrint.Add(string.Format(F_form, failedTokenCount, "At", lineCount + ",", atCol + ":", token));
-                    AcceptPrint.Add(string.Format(A_form, tokenCount, "Error",
-                        "Unrecognized character: " + token, "at " + lineCount + "," + atCol));
+                    FailPrint.Add(string.Format(A_form, failedTokenCount, "Error", "Unrecognized character: " + token, loc));
+                    AcceptPrint.Add(string.Format(A_form, tokenCount, "Error", "Unrecognized character: " + token, loc));
                     tokenCount++;
                     failedTokenCount++;
                     TStream.AddToken(new Token(token, -1, false, atCol));
@@ -163,5 +164,4 @@ namespace Calculator
             return TStream;
 		}
     }
-
 }
