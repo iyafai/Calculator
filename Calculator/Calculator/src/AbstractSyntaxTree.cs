@@ -12,7 +12,7 @@ namespace Calculator
         private string intdivZeroErrorMsg = "**Error: Division by Zero. Div({0},{1}) is undefined. Result set to 0.";
         private string modZeroErrorMsg = "**Error: Modulo by Zero. Mod({0},{1}) is undefined. Result set to 0.";
         private string variableDefinedWarning = "**Warning: Variable previously defined. Future calculations will use new value";
-        //private string undefinedResultErrorMsg = "**Calculation Error. Value of {0} is undefined. ";
+        private string valueOverflowErrorMsg = "**Calculation Error. Value of {0} is too large. Results set to 0. ";
 
         public AbstractSyntaxTree(Node H)
         {
@@ -174,10 +174,18 @@ namespace Calculator
                     case 14:
                         // Multiplication
                         result = (varValue[1] * varValue[0]);
+                        if(Double.IsInfinity(result))
+                        {
+                            throw new CalculationErrorException(String.Format(valueOverflowErrorMsg,result));
+                        }
                         break;
                     case 15:
                         // Power
                         result = Math.Pow(varValue[1],varValue[0]);
+                        if (Double.IsInfinity(result))
+                        {
+                            throw new CalculationErrorException(String.Format(valueOverflowErrorMsg, result));
+                        }
                         break;
                     case 18:
                         // Subtraction
