@@ -29,7 +29,7 @@ namespace Calculator
                 File.Delete(result);
             }
             Console.Out.Write("Lexical Analyzer Results Printed to: {0}\n", result);
-            string[] tempH = { "Token List:", "", string.Format("|{0,12} | {1,12} | {2,27} | {3,8}|", "#", "Type", "Value", "Location")};
+            string[] tempH = { "Token List:", "", string.Format("|{0,12} | {1,12} | {2,27} | {3,8}|", " ", "Type", "Value", "Location")};
             List<string> Header = new List<string>(tempH);
             Header.Add(new String('-', tempH[2].Length));
             string[] E_Header = { "", "Errors:", "" };
@@ -47,14 +47,14 @@ namespace Calculator
             // line count is incremented at the beginning of each run to keep track of which string we're analyzing
             lineCount++;
             GoldParserTables GPtables = new GoldParserTables();
-            int init_state = GPtables.getInitialDFAState();         //convenience for going back to beginning of DFA
+            int initialstate = GPtables.getInitialDFAState();         //convenience for going back to beginning of DFA
             // Keeps track of where we're going (initial value doesn't matter)
-            int state_tran = init_state;
-            // The staet we begin with
-			DFAState state = GPtables.getDFATable()[init_state];
+            int newstate = initialstate;
+            // The state we begin with
+			DFAState state = GPtables.getDFATable()[initialstate];
             // Keeps track of the column the token is found at.
-            int col_count = 1, col_at = 1;
-            string A_form = "|[{0,10}] | {1,12} | {2,27} | {3,-8}|";
+            int atCol = 1;
+            string A_form = "|#{0,10}  | {1,12} | {2,27} | {3,-8}|";
             string F_form = "[{0,10}] {1,-5} {2,-3} {3,-3} Unrecognized character: {4,5}";
 
             TokenStream TStream = new TokenStream();
@@ -66,111 +66,100 @@ namespace Calculator
             // Goes through the input character by character
 			for (int i = 0; i < input.Length; i++)
 			{
-                Token test = new Token();
-                // Used as a preliminary check if the character is a valid character at all.
-                bool check = false;
-                // Might not be needed, will check into it in the future.
-				foreach (CharSetTableMember c in GPtables.getCharSetTable())
-				{
-					if (c.getCharSetTableList().Contains(input[i]))
-						check = true;
-				}
-                // Here we just skip the invalid character and add it as an invalid token
-				if (!check)
-				{
-                    FailPrint.Add(string.Format(F_form, failedTokenCount, "At", lineCount + ",", (col_count - 1) + ":", input[i]));
-                    AcceptPrint.Add(string.Format(A_form, tokenCount, "Error", 
-                        "Unrecognized character: " + input[i], "at " + lineCount + "," + col_count));
+                bool transition = true;
+                bool validCharacter = false;
+                int edgeCount = 0;
+                atCol = i + 1;
+
+                // A bit cumbersome, but I haven't thought of a better way to check this yet.
+                foreach (CharSetTableMember c in GPtables.getCharSetTable())
+                {
+                    if (c.getCharSetTableList().Contains(input[i]))
+                        validCharacter = true;
+                }
+                // This is for cases of random tokens that aren't accepted in any transitions.
+                // We just skip them here and be done with it.
+                if (!validCharacter)
+                {
+                    FailPrint.Add(string.Format(F_form, failedTokenCount, "At", lineCount + ",", atCol + ":", input[i]));
+                    AcceptPrint.Add(string.Format(A_form, tokenCount, "Error",
+                        "Unrecognized character: " + input[i], "at " + lineCount + "," + atCol));
                     tokenCount++;
                     failedTokenCount++;
-                    TStream.AddToken(new Token(input[i].ToString(),-1,false,col_count));
-                    col_count++;
+                    TStream.AddToken(new Token(input[i].ToString(), -1, false, atCol));
                     continue;
-				}
+                }
 
-                // Used for keeping count of the transitions from the current DFA state.
-				int edgeC = 0;
-				foreach (DFAEdge e in state.getEdgeList())
-				{
-					// Checks if current character is in CharSetTable for current edge.
-                    // In which case we make the transition and break from the loop
-					if (GPtables.getCharSetTable()[e.getDFAedgeIndex()].getCharSetTableList().Contains(input[i]))
-					{
-						token += input[i];
-						state_tran = e.getDFAedgeTarget();
-                        // At this point we don't care about the other edges.
-						break;
-					}
-					else
-						edgeC++;
-				}
-
-                // In the case none of our edges are valid transitions we arrive here.
-				if (edgeC == state.getEdgeCount())      
-				{
-                    // The i-- is neccessary to backtrack, as the previous character might have ended our valid token.
-					i--; 
-                    col_count--;
-
-					if (state.getAcceptSymbolIndex() == -1)     //No acceptance, token is added to error printout
-					{
-                        col_at = (col_count - token.Length + 1);
-                        string temp = "[{0,5}] {1,-5} {2,-3} {3,-3} Unrecognized character: {4,5}";
-                        FailPrint.Add(string.Format(temp, failedTokenCount, "At", lineCount + ",", col_at + ":", input[i]));
-                        AcceptPrint.Add(string.Format(A_form, tokenCount, "Error", 
-                            "Unrecognized character: " + input[i], "at " + lineCount + "," + col_at));
-                        tokenCount++;
-                        failedTokenCount++;
-                        TStream.AddToken(new Token(token, -1, false, col_at));
-						state = GPtables.getDFATable()[init_state];
-					}
-
-					else                                        //Accept state
-					{
-						symbol = state.getAcceptSymbolIndex();
-						if (symbol != 2)                        //who cares about white space anyhow
-						{
-                            col_at = (col_count - token.Length + 1);
-                            string token_name = GPtables.getSymbolTable()[symbol].getSymbolTableName();
-                            AcceptPrint.Add(string.Format(A_form, tokenCount, token_name, token, "at " + lineCount + "," + col_at));
-                            TStream.AddToken(new Token(token, symbol, true, col_at));
-                            tokenCount++;
-						}
-						state_tran = init_state;  //change new state back to initial
-					}
-					token = "";
-				}
-				//Transistions to the new DFA state
-				state = GPtables.getDFATable()[state_tran];
-
-				if (i == (input.Length - 1))   //if we're at the end of the line we do this as it can't add more characters for doing stuff
-				{
-					symbol = state.getAcceptSymbolIndex();
-					//in retrospect I might be making a bad assumption here, need to check back later
-                    if (symbol == -1)
+                while(transition && i< input.Length)
+                {
+                    foreach (DFAEdge e in state.getEdgeList())
                     {
-                        col_at = (col_count - token.Length + 1);
-                        string temp = "[{0,5}] {1,-5} {2,-3} {3,-3} Unrecognized character: {4,5}";
-                        FailPrint.Add(string.Format(temp, failedTokenCount, "At", lineCount + ",", col_at + ":", input[i]));
-                        AcceptPrint.Add(string.Format(A_form, tokenCount, "Error",
-                            "Unrecognized character: " + input[i], "at " + lineCount + "," + col_at));
-                        tokenCount++;
-                        failedTokenCount++;
-                        TStream.AddToken(new Token(token, -1, false, col_at));
-                        state = GPtables.getDFATable()[init_state];
+                        // This line is a bit messy, what it does is it checks the character set table
+                        // and looks for the CharSetTableMember that corresponds to the which edge we're on.
+                        // The char set members are unique corresponding to a specific state transition.
+                        // It then pulls that list of characters stored in the CharSetTableMember
+                        // And checks if the current character in our input is in there somewhere.
+                        // In which case we add it onto our burgeoning token, change state and look at the next character.
+                        if (GPtables.getCharSetTable()[e.getDFAedgeIndex()].getCharSetTableList().Contains(input[i]))
+                        {
+                            newstate = e.getDFAedgeTarget();
+                            state = GPtables.getDFATable()[newstate];
+                            token += input[i];
+                            edgeCount = 0;
+                            i++;
+                            // We don't care about any other edges as a transition is based on character input
+                            // and not final state, that is it will branch naturally once it hits characters
+                            // that distinguish tokens such as . distinguishing a int from a float,exp,etc
+                            break;
+                        }
+                        else
+                        {
+                            edgeCount++;
+                        }
                     }
-					else if (symbol != 2)    //once again ignoring white space
-					{
-                        col_at = (col_count - token.Length + 1);
+                    if (edgeCount == state.getEdgeCount())
+                    {
+                        transition = false;
+                    }
+                }
+                // We don't check for accept states while building the token, because eventually it'll hit
+                // a wall with state transitions at which point the tokenizing will fail.
+                // So once we've built our token as big as we can we'll check for an accept state.
+
+                // If it's not an error state, we check to make sure it's not whitespace (symbol==2)
+                // And then move to add it to our token stream and printout
+                if (state.getAcceptSymbolIndex() !=-1)
+                {
+                    symbol = state.getAcceptSymbolIndex();
+                    if (symbol != 2)
+                    {
                         string token_name = GPtables.getSymbolTable()[symbol].getSymbolTableName();
-                        AcceptPrint.Add(string.Format(A_form, tokenCount, token_name, token, "at " + lineCount + "," + col_at));
-                        TStream.AddToken(new Token(token,symbol,true,col_at));
+                        AcceptPrint.Add(string.Format(A_form, tokenCount, token_name, token, "at " + lineCount + "," + atCol));
+                        TStream.AddToken(new Token(token, symbol, true, atCol));
                         tokenCount++;
-					}
-				}
-                col_count++;
+                    }
+                }
+
+                else
+                {
+                    FailPrint.Add(string.Format(F_form, failedTokenCount, "At", lineCount + ",", atCol + ":", token));
+                    AcceptPrint.Add(string.Format(A_form, tokenCount, "Error",
+                        "Unrecognized character: " + token, "at " + lineCount + "," + atCol));
+                    tokenCount++;
+                    failedTokenCount++;
+                    TStream.AddToken(new Token(token, -1, false, atCol));
+                }
+                newstate = initialstate;
+                state = GPtables.getDFATable()[initialstate];
+                token = "";
+
+                // The reason we subtract is because we add in the above loop on the assumption
+                // that the next piece of the input will be added to our token
+                // When we get down here that last bit isn't added so we want to make sure we're checking that character
+                // This is especially relevant for the last character in the input string as it would skip it otherwise continuing the loop.
+                i--;
             }
-            TStream.AddToken(new Token("EOF", 0, true, 1));
+            TStream.AddToken(new Token("EOF", 0, true, input.Length+1));
             return TStream;
 		}
     }

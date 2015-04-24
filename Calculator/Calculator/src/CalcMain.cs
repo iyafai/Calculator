@@ -147,6 +147,7 @@ namespace Calculator
 
                 while (true)
                 {
+                    Console.Out.Write("> ");
                     eq = Console.In.ReadLine();
                     // Typing quit ends equation solver
                     if (eq.Equals("quit", StringComparison.OrdinalIgnoreCase))
@@ -164,7 +165,7 @@ namespace Calculator
                     }
                     catch (ParseErrorException e)
                     {
-                        Console.Out.Write(String.Format("{0,10} => {1}\n", eq, "invalid"));
+                        Console.Out.Write(String.Format("{0,-10} => {1}\n", eq, "invalid"));
                         Console.Out.Write(e.Message + "\n");
                     }
                     catch (CalculationErrorException c)
@@ -173,7 +174,7 @@ namespace Calculator
                         {
                             varTable.Add(TStream.getToken(0).getTokenName(), "0");
                             varTable.TryGetValue(variableset, out tvalue);
-                            Console.Out.Write(String.Format("{0,10} = {1}\n", variableset, tvalue));
+                            Console.Out.Write(String.Format("\t{0} = {1}\n", variableset, tvalue));
                         }
                         catch (ArgumentException)
                         {
@@ -181,7 +182,7 @@ namespace Calculator
                             Console.Out.Write(String.Format("{0,10} = {1}\n", variableset, tvalue));
                             Console.Out.Write("**Warning: Variable already defined. Future calculations will use new value\n");
                         }
-                        Console.Out.Write(c.Message + "\n");
+                        Console.Out.Write("\t"+c.Message + "\n");
                     }
                     catch (ArgumentException ae)
                     {

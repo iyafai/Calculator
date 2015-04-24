@@ -85,7 +85,10 @@ namespace Calculator
                         StringBuilder expected = new StringBuilder();
                         foreach (LALRAction la in Lstate.getLALR_ActionList())
                         {
-                            expected.Append("["+symTable[la.getIndex()].getSymbolTableName()+"] ");
+                            if (la.getIndex() < 19)
+                            {
+                                expected.Append("[" + symTable[la.getIndex()].getSymbolTableName() + "] ");
+                            }
                         }
                         throw new ParseErrorException(
                             string.Format(spaces + tokenErrorMsg + "\nExpected: {3}",
