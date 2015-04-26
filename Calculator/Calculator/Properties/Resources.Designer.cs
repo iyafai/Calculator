@@ -77,23 +77,5 @@ namespace Calculator.Properties {
                 return ResourceManager.GetString("GrammarFinal", resourceCulture);
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to &lt;?GOLDParserTables version=&quot;5.0&quot;?&gt;
-        ///&lt;Tables&gt;
-        ///        &lt;Properties&gt;
-        ///                &lt;Property Index=&quot;0&quot; Name=&quot;Name&quot; Value=&quot;(Untitled)&quot;/&gt;
-        ///                &lt;Property Index=&quot;1&quot; Name=&quot;Author&quot; Value=&quot;(Unknown)&quot;/&gt;
-        ///                &lt;Property Index=&quot;2&quot; Name=&quot;Version&quot; Value=&quot;(Not Specified)&quot;/&gt;
-        ///                &lt;Property Index=&quot;3&quot; Name=&quot;About&quot; Value=&quot;&quot;/&gt;
-        ///                &lt;Property Index=&quot;4&quot; Name=&quot;Character Set&quot; Value=&quot;Unicode&quot;/&gt;
-        ///                &lt;Property Index=&quot;5&quot; Name=&quot;Character Mapping&quot; Value=&quot;Windows-1252&quot;/&gt;
-        ///    [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string GrammarFinal_T5 {
-            get {
-                return ResourceManager.GetString("GrammarFinal_T5", resourceCulture);
-            }
-        }
     }
 }
