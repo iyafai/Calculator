@@ -12,7 +12,7 @@ namespace Calculator
         private string intdivZeroErrorMsg = "**Error: Division by Zero. Div({0},{1}) is undefined. Result set to 0.";
         private string modZeroErrorMsg = "**Error: Modulo by Zero. Mod({0},{1}) is undefined. Result set to 0.";
         private string variableDefinedWarning = "**Warning: Variable previously defined. Future calculations will use new value";
-        private string valueOverflowErrorMsg = "**Calculation Error. Value of {0} is too large. Results set to 0. ";
+        private string invalidValueErrorMsg = "**Calculation Error. Value of {0} is invalid. Results set to 0. ";
 
         public AbstractSyntaxTree(Node H)
         {
@@ -112,7 +112,14 @@ namespace Calculator
                         else 
                         {
                             string input = calcStack.Pop().getToken().getTokenName();
-                            varValue[i] = Double.Parse(input, System.Globalization.NumberStyles.Float);
+                            try
+                            {
+                                varValue[i] = Double.Parse(input, System.Globalization.NumberStyles.Float);
+                            }
+                            catch (OverflowException)
+                            {
+                                throw new CalculationErrorException(String.Format(invalidValueErrorMsg,input));
+                            }
                         }
                     }
                 }
@@ -176,7 +183,7 @@ namespace Calculator
                         result = (varValue[1] * varValue[0]);
                         if(Double.IsInfinity(result))
                         {
-                            throw new CalculationErrorException(String.Format(valueOverflowErrorMsg,result));
+                            throw new CalculationErrorException(String.Format(invalidValueErrorMsg,result));
                         }
                         break;
                     case 15:
@@ -184,7 +191,7 @@ namespace Calculator
                         result = Math.Pow(varValue[1],varValue[0]);
                         if (Double.IsInfinity(result))
                         {
-                            throw new CalculationErrorException(String.Format(valueOverflowErrorMsg, result));
+                            throw new CalculationErrorException(String.Format(invalidValueErrorMsg, result));
                         }
                         break;
                     case 18:

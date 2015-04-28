@@ -97,6 +97,8 @@ namespace Calculator
                             // For edge case of calculation error & overwrite attempt
                             catch (ArgumentException)
                             {
+                                varTable.Remove(variableset);
+                                varTable.Add(variableset, "0");
                                 varTable.TryGetValue(variableset, out tvalue);
                                 calculatorOutput.Add(string.Format("{0,-" + maxFormat + "} => {1}", eq, tvalue));
                                 calculatorOutput.Add("**Warning: Variable already defined. Future calculations will use new value");
@@ -178,6 +180,8 @@ namespace Calculator
                         }
                         catch (ArgumentException)
                         {
+                            varTable.Remove(variableset);
+                            varTable.Add(variableset, "0");
                             varTable.TryGetValue(variableset, out tvalue);
                             Console.Out.Write(String.Format("{0,10} = {1}\n", variableset, tvalue));
                             Console.Out.Write("**Warning: Variable already defined. Future calculations will use new value\n");
@@ -197,7 +201,7 @@ namespace Calculator
                 }
             }
 
-            Console.WriteLine("Press any key to close...");
+            Console.WriteLine("Press Enter to close...");
             Console.Read();
         }
     }
