@@ -35,7 +35,7 @@ namespace Calculator
         {
             // searchStack, visited and treeLoc are used for traversing the tree with a Depth-First Search.
             // Nodes are stored in rpnStack in Reverse Polish Notation.
-            // Allowing the use of the postfix algorith to solve for a value.
+            // Allowing the use of the postfix algorithm to solve for a value.
             // CalcStack taking the place of the stack in that algorithm.
             Node treeLoc = this.Head;
             List<Node> visited = new List<Node>();
